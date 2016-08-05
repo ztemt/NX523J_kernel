@@ -1,0 +1,77 @@
+################################################# SENROS START
+menuconfig NUBIA_SENSORS
+	tristate "NUBIA SENSORS ON"
+	default n
+	help
+		nubia senor
+if NUBIA_SENSORS
+config FEATURE_NUBIA_SENSORS_LOG_ON
+	tristate "NUBIA SENSORS LOG ON"
+	depends on NUBIA_SENSORS
+	default n
+	help
+		If you want to enable the sensor log,
+		then choose this config
+################################################# PROX START
+config NUBIA_SENSORS_PROX_PA224
+	tristate "support litehole prox sensor driver"
+	depends on NUBIA_SENSORS
+	default n
+	help
+		nubia prox device
+
+config NUBIA_SENSORS_PROX_TMD2772
+	tristate "support tmd2772 prox sensor driver"
+	depends on NUBIA_SENSORS
+	default n
+	help
+		nubia prox device
+
+################################################# RGB START
+config NUBIA_SENSORS_RGB_BH1745
+	tristate "support rgb bh1745 driver"
+	depends on NUBIA_SENSORS
+	default n
+	help
+		nubia rgb device
+
+################################################# PRESSURE_DEVICE START
+config NUBIA_SENSORS_PRESSURE_DEVICE
+	tristate "support pressure device driver"
+	depends on NUBIA_SENSORS
+	default n
+	help
+		nubia pressure device
+
+################################################# HALL START
+config NUBIA_SENSORS_HALL_DEVICE
+	tristate "hall devicedriver"
+	depends on NUBIA_SENSORS
+	default n
+	help
+	  If you say yes here you get support for
+	  hall device
+
+config NUBIA_SENSORS_HALL_DEVICE_SINGLE
+	tristate "single hall device driver"
+	depends on NUBIA_SENSORS
+	default n
+	help
+	  If you say yes here you get support for
+	  hall device
+
+################################################# FINGER_PRINTER START
+menuconfig NUBIA_SENSORS_FP
+	tristate "NUBIA FP DEVICE"
+	depends on NUBIA_SENSORS
+	default n
+
+if NUBIA_SENSORS_FP
+
+source drivers/hwmon/nubia_sensors/gf318m_platform/Kconfig
+source drivers/hwmon/nubia_sensors/fpc1020_platform/Kconfig
+
+endif
+################################################# FINGER_PRINTER END
+
+endif

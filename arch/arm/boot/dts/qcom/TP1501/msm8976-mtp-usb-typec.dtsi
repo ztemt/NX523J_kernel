@@ -1,0 +1,25 @@
+/* Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+ 
+&soc {
+    i2c@78b6000 {
+        usbtypec@47 {
+                   compatible = "ti,usbtypec";
+                   reg = <0x47>;
+                   pinctrl-names = "active","suspend";
+                   pinctrl-0 = <&usbtypec_power_active &usbtypec_int_active>;
+                   pinctrl-1 = <&usbtypec_power_suspend &usbtypec_int_suspend>;
+                   ti,enable-gpio = <&msm_gpio 52 0>;
+                   ti,rst-gpio = <&msm_gpio 106 0>;
+                };
+    };
+};

@@ -1,0 +1,1099 @@
+./atmel_mxt_ts_platform.h:142:   // pdata->gpio_reset = MXT_RST_PORT;
+./atmel_mxt_ts_platform.h:143:   // pdata->gpio_irq = MXT_INT_PORT;
+./atmel_mxt_ts_platform.h:145:   // printk("------pdata->gpio_reset---------: %d  MXT_RST_PORT= %ud \n",(pdata->gpio_reset),mxt_rst_number);
+./atmel_mxt_ts_platform.h:146:   // printk("------pdata->gpio_irq-----------: %d  MXT_INT_PORT= %ud \n",(pdata->gpio_irq), mxt_int_number);
+./virtualkey.if:31:	pdata = data->pdata;
+./virtualkey.if:32:	v_ratio = &pdata->vkey_space_ratio;
+./virtualkey.if:34:	if (!pdata->t15_num_keys)
+./virtualkey.if:37:	x_edge = (data->max_x + 1) * v_ratio->x_edge / 100;
+./virtualkey.if:38:	x_space = (data->max_x + 1) * v_ratio->x_space / 100;
+./virtualkey.if:39:	x_rage = (data->max_x + 1) * (100 - v_ratio->x_edge * 2 + v_ratio->x_space);
+./virtualkey.if:41:	y_top = (data->max_y - pdata->max_y_t) * v_ratio->y_top / 100;
+./virtualkey.if:42:	y_rage = (data->max_y - pdata->max_y_t) * (100 - v_ratio->y_top - v_ratio->y_bottom) / 100 + 1;
+./virtualkey.if:44:	for (i = 0, j = 0; i < pdata->t15_num_keys; i++) {
+./virtualkey.if:47:		if (pdata->max_y_t <= data->max_y) {
+./virtualkey.if:48:			center_y = pdata->max_y_t + 1;
+./virtualkey.if:51:			center_y = pdata->max_y_t + y_top;
+./virtualkey.if:55:		   __stringify(EV_KEY),pdata->t15_keymap[i],
+./virtualkey.if:57:		   (i==pdata->t15_num_keys - 1 ? "\n" : ":"));
+./atmel_mxt_ts.c:628:			   message, data->T5_msg_size, false);
+./atmel_mxt_ts.c:633:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:635:	if (data->debug_v2_enabled)
+./atmel_mxt_ts.c:638:	mutex_lock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:640:	data->debug_msg_data = kcalloc(DEBUG_MSG_MAX,
+./atmel_mxt_ts.c:641:				data->T5_msg_size, GFP_KERNEL);
+./atmel_mxt_ts.c:642:	if (!data->debug_msg_data) {
+./atmel_mxt_ts.c:643:		dev_err(&data->client->dev, "Failed to allocate buffer\n");
+./atmel_mxt_ts.c:647:	data->debug_v2_enabled = true;
+./atmel_mxt_ts.c:648:	mutex_unlock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:655:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:657:	if (!data->debug_v2_enabled)
+./atmel_mxt_ts.c:661:	data->debug_v2_enabled = false;
+./atmel_mxt_ts.c:663:	mutex_lock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:664:	kfree(data->debug_msg_data);
+./atmel_mxt_ts.c:665:	data->debug_msg_data = NULL;
+./atmel_mxt_ts.c:666:	data->debug_msg_count = 0;
+./atmel_mxt_ts.c:667:	mutex_unlock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:673:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:675:	mutex_lock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:677:	if (!data->debug_msg_data) {
+./atmel_mxt_ts.c:682:	if (data->debug_msg_count < DEBUG_MSG_MAX) {
+./atmel_mxt_ts.c:683:		memcpy(data->debug_msg_data + data->debug_msg_count * data->T5_msg_size,
+./atmel_mxt_ts.c:685:			   data->T5_msg_size);
+./atmel_mxt_ts.c:686:		data->debug_msg_count++;
+./atmel_mxt_ts.c:688:		dev_dbg(dev, "Discarding %u messages\n", data->debug_msg_count);
+./atmel_mxt_ts.c:689:		data->debug_msg_count = 0;
+./atmel_mxt_ts.c:692:	mutex_unlock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:694:	sysfs_notify(&data->client->dev.kobj, NULL, "debug_notify");
+./atmel_mxt_ts.c:712:	if (!data->debug_msg_data) {
+./atmel_mxt_ts.c:717:	count = bytes / data->T5_msg_size;
+./atmel_mxt_ts.c:722:	mutex_lock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:724:	if (count > data->debug_msg_count)
+./atmel_mxt_ts.c:725:		count = data->debug_msg_count;
+./atmel_mxt_ts.c:727:	bytes_read = count * data->T5_msg_size;
+./atmel_mxt_ts.c:729:	memcpy(buf, data->debug_msg_data, bytes_read);
+./atmel_mxt_ts.c:730:	data->debug_msg_count = 0;
+./atmel_mxt_ts.c:732:	mutex_unlock(&data->debug_msg_lock);
+./atmel_mxt_ts.c:739:	sysfs_bin_attr_init(&data->debug_msg_attr);
+./atmel_mxt_ts.c:740:	data->debug_msg_attr.attr.name = "debug_msg";
+./atmel_mxt_ts.c:741:	data->debug_msg_attr.attr.mode = 0666;
+./atmel_mxt_ts.c:742:	data->debug_msg_attr.read = mxt_debug_msg_read;
+./atmel_mxt_ts.c:743:	data->debug_msg_attr.write = mxt_debug_msg_write;
+./atmel_mxt_ts.c:744:	data->debug_msg_attr.size = data->T5_msg_size * DEBUG_MSG_MAX;
+./atmel_mxt_ts.c:746:	if (sysfs_create_bin_file(&data->client->dev.kobj,
+./atmel_mxt_ts.c:747:				  &data->debug_msg_attr) < 0) {
+./atmel_mxt_ts.c:748:		dev_err(&data->client->dev, "Failed to create %s\n",
+./atmel_mxt_ts.c:749:			data->debug_msg_attr.attr.name);
+./atmel_mxt_ts.c:758:	if (data->debug_msg_attr.attr.name)
+./atmel_mxt_ts.c:759:		sysfs_remove_bin_file(&data->client->dev.kobj,
+./atmel_mxt_ts.c:760:					  &data->debug_msg_attr);
+./atmel_mxt_ts.c:766:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:784:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:788:	mutex_lock(&data->dma_access_mutex);
+./atmel_mxt_ts.c:790:	client->addr = data->bootloader_addr;
+./atmel_mxt_ts.c:794:	mutex_unlock(&data->dma_access_mutex);
+./atmel_mxt_ts.c:807:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:811:	mutex_lock(&data->dma_access_mutex);
+./atmel_mxt_ts.c:813:	client->addr = data->bootloader_addr;
+./atmel_mxt_ts.c:823:	mutex_unlock(&data->dma_access_mutex);
+./atmel_mxt_ts.c:840:	msg.addr = data->bootloader_addr;
+./atmel_mxt_ts.c:841:	msg.flags = data->client->flags & I2C_M_TEN;
+./atmel_mxt_ts.c:846:	ret = i2c_transfer(data->client->adapter, &msg, 1);
+./atmel_mxt_ts.c:852:		dev_err(&data->client->dev, "%s: i2c recv failed (%d)\n",
+./atmel_mxt_ts.c:865:	msg.addr = data->bootloader_addr;
+./atmel_mxt_ts.c:866:	msg.flags = data->client->flags & I2C_M_TEN;
+./atmel_mxt_ts.c:870:	ret = i2c_transfer(data->client->adapter, &msg, 1);
+./atmel_mxt_ts.c:875:		dev_err(&data->client->dev, "%s: i2c send failed (%d)\n",
+./atmel_mxt_ts.c:885:	u8 appmode = data->client->addr & 0x7F;
+./atmel_mxt_ts.c:889:	if (data->info)
+./atmel_mxt_ts.c:890:		family_id = data->info->family_id;
+./atmel_mxt_ts.c:908:		dev_err(&data->client->dev,
+./atmel_mxt_ts.c:914:	data->bootloader_addr = bootloader;
+./atmel_mxt_ts.c:916:	data->bootloader_addr |= I2C_RS_FLAG | I2C_ENEXT_FLAG | I2C_DMA_FLAG;
+./atmel_mxt_ts.c:918:	dev_dbg(&data->client->dev,
+./atmel_mxt_ts.c:925:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:949:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:971:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:983:		ret = mxt_wait_for_completion(data, &data->bl_completion,
+./atmel_mxt_ts.c:1064:		retval = i2c_master_recv(client, (char *)data->i2c_dma_pa + PAGE_SIZE, transfer_len);
+./atmel_mxt_ts.c:1070:		memcpy(val, data->i2c_dma_va + PAGE_SIZE, transfer_len);
+./atmel_mxt_ts.c:1089:		memcpy(data->i2c_dma_va, val, transfer_len);
+./atmel_mxt_ts.c:1090:		retval = i2c_master_send(client, (char *)data->i2c_dma_pa, transfer_len);
+./atmel_mxt_ts.c:1117:	mutex_lock(&data->dma_access_mutex);
+./atmel_mxt_ts.c:1134:	mutex_unlock(&data->dma_access_mutex);	
+./atmel_mxt_ts.c:1170:	mutex_lock(&data->dma_access_mutex);
+./atmel_mxt_ts.c:1172:	mutex_unlock(&data->dma_access_mutex);
+./atmel_mxt_ts.c:1281:	unsigned short address = data->client->addr & 0x7F;  //7 bit address
+./atmel_mxt_ts.c:1287:	dev_err(&data->client->dev, "[mxt] try %d chip address 0x%x\n",retry,address);
+./atmel_mxt_ts.c:1299:	if (!data->object_table)
+./atmel_mxt_ts.c:1301:	for (i = 0; i < data->info->object_num; i++) {
+./atmel_mxt_ts.c:1302:		object = data->object_table + i;
+./atmel_mxt_ts.c:1307:	dev_warn(&data->client->dev, "Invalid object type T%u\n", type);
+./atmel_mxt_ts.c:1314:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1318:	if (crc != data->config_crc) {
+./atmel_mxt_ts.c:1319:		data->config_crc = crc;
+./atmel_mxt_ts.c:1321:		complete(&data->crc_completion);
+./atmel_mxt_ts.c:1325:	if (data->t6_status & MXT_T6_STATUS_RESET) {
+./atmel_mxt_ts.c:1327:		complete(&data->reset_completion);
+./atmel_mxt_ts.c:1329:		data->enable_wakeup = 0;
+./atmel_mxt_ts.c:1333:	if (status != data->t6_status) {
+./atmel_mxt_ts.c:1348:	mxt_plugin_hook_t6(&data->plug, status);
+./atmel_mxt_ts.c:1352:	data->t6_status = status;
+./atmel_mxt_ts.c:1358:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1366:	memcpy(&data->t19_msg[0], &msg[1], sizeof(data->t19_msg));
+./atmel_mxt_ts.c:1372:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1373:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1390:	if (!test_bit(MXT_WK_ENABLE,&data->enable_wakeup))
+./atmel_mxt_ts.c:1394:	idx = mxt_plugin_hook_t24(&data->plug, msg);
+./atmel_mxt_ts.c:1397:		if (idx >= 0 && idx < data->pdata->t15_num_keys) {
+./atmel_mxt_ts.c:1399:					data->pdata->t15_keymap[idx], 1);
+./atmel_mxt_ts.c:1402:					data->pdata->t15_keymap[idx], 0);
+./atmel_mxt_ts.c:1405:			set_bit(MXT_WK_DETECTED,&data->enable_wakeup);
+./atmel_mxt_ts.c:1415:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1428:	memcpy(&data->t25_msg[0], &msg[1], sizeof(data->t25_msg));
+./atmel_mxt_ts.c:1438:	data->alt_chip = enable;
+./atmel_mxt_ts.c:1440:	reg = data->T19_address;
+./atmel_mxt_ts.c:1443:	ret = __mxt_write_reg(data->client, reg + 3, sizeof(val), val);
+./atmel_mxt_ts.c:1448:	ret = __mxt_write_reg(data->client, reg, sizeof(val), val);
+./atmel_mxt_ts.c:1457:		ret = __mxt_read_reg(data->client, reg, 1, &val[0]);
+./atmel_mxt_ts.c:1463:		dev_err(&data->client->dev, "Command failed!\n");
+./atmel_mxt_ts.c:1475:			 data->t19_msg[0],
+./atmel_mxt_ts.c:1476:			 (data->t19_msg[0]>>2) & 0xf);
+./atmel_mxt_ts.c:1504:	reg = data->T25_address;
+./atmel_mxt_ts.c:1508:	ret = __mxt_write_reg(data->client, reg, sizeof(val), val);
+./atmel_mxt_ts.c:1517:		ret = __mxt_read_reg(data->client, reg + 1, 1, &val[1]);
+./atmel_mxt_ts.c:1523:		dev_err(&data->client->dev, "Command failed!\n");
+./atmel_mxt_ts.c:1536:			 data->t25_msg[0],
+./atmel_mxt_ts.c:1537:			 data->t25_msg[1],
+./atmel_mxt_ts.c:1538:			 data->t25_msg[2],
+./atmel_mxt_ts.c:1539:			 data->t25_msg[3],
+./atmel_mxt_ts.c:1540:			 data->t25_msg[4],
+./atmel_mxt_ts.c:1541:			 data->t25_msg[5]);
+./atmel_mxt_ts.c:1565:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1566:	const struct mxt_platform_data *pdata = data->pdata;
+./atmel_mxt_ts.c:1574:	if (!data->enable_reporting)
+./atmel_mxt_ts.c:1578:	for (i = 0; i < pdata->t19_num_keys; i++) {
+./atmel_mxt_ts.c:1579:		if (pdata->t19_keymap[i] == KEY_RESERVED)
+./atmel_mxt_ts.c:1582:		input_report_key(input_dev, pdata->t19_keymap[i], button);
+./atmel_mxt_ts.c:1600:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1601:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1615:	if (!data->enable_reporting)
+./atmel_mxt_ts.c:1618:	id = message[0] - data->T9_reportid_min;
+./atmel_mxt_ts.c:1624:	if (data->max_x < 1024)
+./atmel_mxt_ts.c:1626:	if (data->max_y < 1024)
+./atmel_mxt_ts.c:1680:	data->update_input = true;
+./atmel_mxt_ts.c:1682:	mxt_plugin_hook_t9(&data->plug, id, x, y, status);
+./atmel_mxt_ts.c:1688:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1689:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1700:	if (!data->enable_reporting)
+./atmel_mxt_ts.c:1703:	id = message[0] - data->T100_reportid_min - 2;
+./atmel_mxt_ts.c:1714:				mxt_plugin_hook_t42(&data->plug,0x1);
+./atmel_mxt_ts.c:1716:				mxt_plugin_hook_t42(&data->plug,0);
+./atmel_mxt_ts.c:1730:		(data->t100_aux_area) ? message[data->t100_aux_area] : 0,
+./atmel_mxt_ts.c:1731:		(data->t100_aux_ampl) ? message[data->t100_aux_ampl] : 0,
+./atmel_mxt_ts.c:1732:		(data->t100_aux_vect) ? message[data->t100_aux_vect] : 0);
+./atmel_mxt_ts.c:1749:		if (data->t100_aux_ampl)
+./atmel_mxt_ts.c:1751:					 message[data->t100_aux_ampl]);
+./atmel_mxt_ts.c:1753:		if (data->t100_aux_area) {
+./atmel_mxt_ts.c:1759:						 message[data->t100_aux_area]);
+./atmel_mxt_ts.c:1762:		if (data->t100_aux_vect)
+./atmel_mxt_ts.c:1764:					 message[data->t100_aux_vect]);
+./atmel_mxt_ts.c:1770:	data->update_input = true;
+./atmel_mxt_ts.c:1772:	mxt_plugin_hook_t100(&data->plug, id, x, y, status);
+./atmel_mxt_ts.c:1779:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1780:	struct mxt_virtual_key_space *v_ratio = &data->pdata->vkey_space_ratio;
+./atmel_mxt_ts.c:1781:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1791:	if (!data->enable_reporting)
+./atmel_mxt_ts.c:1794:	if (!data->pdata->t15_num_keys)
+./atmel_mxt_ts.c:1797:	x_edge = (data->max_x + 1) * v_ratio->x_edge / 100;
+./atmel_mxt_ts.c:1798:	x_space = (data->max_x + 1) * v_ratio->x_space / 100;
+./atmel_mxt_ts.c:1799:	x_rage = (data->max_x + 1) * (100 - v_ratio->x_edge * 2 + v_ratio->x_space)
+./atmel_mxt_ts.c:1800:		/ data->pdata->t15_num_keys / 100;
+./atmel_mxt_ts.c:1802:	for (key = 0; key < data->pdata->t15_num_keys; key++) {
+./atmel_mxt_ts.c:1803:		curr_state = test_bit(key, &data->t15_keystatus);
+./atmel_mxt_ts.c:1808:			__set_bit(key, &data->t15_keystatus);
+./atmel_mxt_ts.c:1813:			input_report_abs(input_dev, ABS_MT_POSITION_Y, data->max_y + 1);
+./atmel_mxt_ts.c:1820:			__clear_bit(key, &data->t15_keystatus);
+./atmel_mxt_ts.c:1828:	if (!data->update_input)
+./atmel_mxt_ts.c:1829:		data->update_input = sync;
+./atmel_mxt_ts.c:1834:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1835:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1845:	if (!data->enable_reporting)
+./atmel_mxt_ts.c:1848:	for (key = 0; key < data->pdata->t15_num_keys; key++) {
+./atmel_mxt_ts.c:1849:		curr_state = test_bit(key, &data->t15_keystatus);
+./atmel_mxt_ts.c:1854:			__set_bit(key, &data->t15_keystatus);
+./atmel_mxt_ts.c:1856:					data->pdata->t15_keymap[key], 1);
+./atmel_mxt_ts.c:1860:			__clear_bit(key, &data->t15_keystatus);
+./atmel_mxt_ts.c:1862:					data->pdata->t15_keymap[key], 0);
+./atmel_mxt_ts.c:1874:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1883:	mxt_plugin_hook_t42(&data->plug, status);		
+./atmel_mxt_ts.c:1889:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1910:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1911:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1923:	if (!test_bit(MXT_WK_ENABLE,&data->enable_wakeup))
+./atmel_mxt_ts.c:1926:	id = msg[0] - data->T61_reportid_min;
+./atmel_mxt_ts.c:1930:	idx = mxt_plugin_hook_t61(&data->plug, id, status);
+./atmel_mxt_ts.c:1933:		if (idx >= data->pdata->t15_num_keys)
+./atmel_mxt_ts.c:1934:			idx  = data->pdata->t15_num_keys - 1;
+./atmel_mxt_ts.c:1936:				data->pdata->t15_keymap[idx], 1);
+./atmel_mxt_ts.c:1939:				data->pdata->t15_keymap[idx], 0);
+./atmel_mxt_ts.c:1942:		set_bit(MXT_WK_DETECTED,&data->enable_wakeup);
+./atmel_mxt_ts.c:1954:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:1955:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:1964:	if (!data->enable_reporting)
+./atmel_mxt_ts.c:1968:	id = data->num_touchids + (msg[0] - data->T63_reportid_min);
+./atmel_mxt_ts.c:1970:	if (id < 0 || id > (data->num_touchids + data->num_stylusids)) {
+./atmel_mxt_ts.c:1972:			id, data->num_stylusids);
+./atmel_mxt_ts.c:2014:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2027:	mxt_plugin_hook_t72(&data->plug, msg);
+./atmel_mxt_ts.c:2033:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2034:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:2049:	if (!test_bit(MXT_WK_ENABLE,&data->enable_wakeup))
+./atmel_mxt_ts.c:2053:	idx = mxt_plugin_hook_t81(&data->plug, msg);
+./atmel_mxt_ts.c:2057:		if (idx >= data->pdata->t15_num_keys)
+./atmel_mxt_ts.c:2058:			idx  = data->pdata->t15_num_keys - 1;
+./atmel_mxt_ts.c:2060:				data->pdata->t15_keymap[idx], 1);
+./atmel_mxt_ts.c:2063:				data->pdata->t15_keymap[idx], 0);
+./atmel_mxt_ts.c:2066:		set_bit(MXT_WK_DETECTED,&data->enable_wakeup);
+./atmel_mxt_ts.c:2076:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2077:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:2094:	if (!test_bit(MXT_WK_ENABLE,&data->enable_wakeup))
+./atmel_mxt_ts.c:2098:	idx = mxt_plugin_hook_t92(&data->plug, msg);
+./atmel_mxt_ts.c:2107:		if (idx >= data->pdata->t15_num_keys)
+./atmel_mxt_ts.c:2108:			idx  = data->pdata->t15_num_keys - 1;
+./atmel_mxt_ts.c:2110:				data->pdata->t15_keymap[idx], 1);
+./atmel_mxt_ts.c:2113:				data->pdata->t15_keymap[idx], 0);
+./atmel_mxt_ts.c:2116:		set_bit(MXT_WK_DETECTED,&data->enable_wakeup);
+./atmel_mxt_ts.c:2125:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2126:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:2138:	if (!test_bit(MXT_WK_ENABLE,&data->enable_wakeup))
+./atmel_mxt_ts.c:2142:	idx = mxt_plugin_hook_t93(&data->plug, msg);
+./atmel_mxt_ts.c:2145:		if (idx >= data->pdata->t15_num_keys)
+./atmel_mxt_ts.c:2146:			idx  = data->pdata->t15_num_keys - 1;
+./atmel_mxt_ts.c:2148:				data->pdata->t15_keymap[idx], 1);
+./atmel_mxt_ts.c:2151:				data->pdata->t15_keymap[idx], 0);
+./atmel_mxt_ts.c:2154:		set_bit(MXT_WK_DETECTED,&data->enable_wakeup);
+./atmel_mxt_ts.c:2163:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2168:	data->selfcap_status.cause = msg[2];
+./atmel_mxt_ts.c:2169:	data->selfcap_status.error_code = msg[3];
+./atmel_mxt_ts.c:2175:	bool dump = data->debug_enabled;
+./atmel_mxt_ts.c:2180:	if (report_id == data->T6_reportid) {
+./atmel_mxt_ts.c:2182:	} else if (report_id >= data->T9_reportid_min
+./atmel_mxt_ts.c:2183:		&& report_id <= data->T9_reportid_max) {
+./atmel_mxt_ts.c:2185:	} else if (report_id >= data->T100_reportid_min
+./atmel_mxt_ts.c:2186:		&& report_id <= data->T100_reportid_max) {
+./atmel_mxt_ts.c:2188:	} else if (report_id == data->T19_reportid) {
+./atmel_mxt_ts.c:2193:		data->update_input = true;
+./atmel_mxt_ts.c:2195:	} else if (report_id == data->T25_reportid) {
+./atmel_mxt_ts.c:2198:	} else if (report_id >= data->T61_reportid_min
+./atmel_mxt_ts.c:2199:		   && report_id <= data->T61_reportid_max) {
+./atmel_mxt_ts.c:2202:	} else if (report_id >= data->T63_reportid_min
+./atmel_mxt_ts.c:2203:		   && report_id <= data->T63_reportid_max) {
+./atmel_mxt_ts.c:2205:	} else if (report_id >= data->T42_reportid_min
+./atmel_mxt_ts.c:2206:		   && report_id <= data->T42_reportid_max) {
+./atmel_mxt_ts.c:2208:	} else if (report_id == data->T48_reportid) {
+./atmel_mxt_ts.c:2210:	} else if (report_id >= data->T15_reportid_min
+./atmel_mxt_ts.c:2211:		   && report_id <= data->T15_reportid_max) {
+./atmel_mxt_ts.c:2213:	} else if ( report_id == data->T24_reportid) {
+./atmel_mxt_ts.c:2215:	} else if (report_id >= data->T72_reportid_min
+./atmel_mxt_ts.c:2216:		   && report_id <= data->T72_reportid_max) {
+./atmel_mxt_ts.c:2218:	} else if (report_id == data->T81_reportid) {
+./atmel_mxt_ts.c:2220:	} else if (report_id == data->T92_reportid) {
+./atmel_mxt_ts.c:2222:	} else if (report_id == data->T93_reportid) {
+./atmel_mxt_ts.c:2224:	} else if (report_id == data->T102_reportid) {
+./atmel_mxt_ts.c:2233:	if (data->debug_v2_enabled)
+./atmel_mxt_ts.c:2241:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2247:	if (count > data->max_reportid)
+./atmel_mxt_ts.c:2251:	ret = __mxt_read_reg(data->client, data->T5_address,
+./atmel_mxt_ts.c:2252:				data->T5_msg_size * count, data->msg_buf);
+./atmel_mxt_ts.c:2260:			data->msg_buf + data->T5_msg_size * i);
+./atmel_mxt_ts.c:2272:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2277:	ret = __mxt_read_reg(data->client, data->T44_address,
+./atmel_mxt_ts.c:2278:		data->T5_msg_size + 1, data->msg_buf);
+./atmel_mxt_ts.c:2284:	count = data->msg_buf[0];
+./atmel_mxt_ts.c:2289:	} else if (count > data->max_reportid) {
+./atmel_mxt_ts.c:2291:		count = data->max_reportid;
+./atmel_mxt_ts.c:2295:	ret = mxt_proc_message(data, data->msg_buf + 1);
+./atmel_mxt_ts.c:2313:	if (data->enable_reporting && data->update_input) {
+./atmel_mxt_ts.c:2314:		mxt_input_sync(data->input_dev);
+./atmel_mxt_ts.c:2315:		data->update_input = false;
+./atmel_mxt_ts.c:2323:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2327:	count = data->max_reportid;
+./atmel_mxt_ts.c:2336:	if (data->enable_reporting && data->update_input) {
+./atmel_mxt_ts.c:2337:		mxt_input_sync(data->input_dev);
+./atmel_mxt_ts.c:2338:		data->update_input = false;
+./atmel_mxt_ts.c:2348:	u8 count = data->last_message_count;
+./atmel_mxt_ts.c:2350:	if (count < 1 || count > data->max_reportid)
+./atmel_mxt_ts.c:2372:	} while (total_handled < data->num_touchids);
+./atmel_mxt_ts.c:2375:	data->last_message_count = total_handled;
+./atmel_mxt_ts.c:2377:	if (data->enable_reporting && data->update_input) {
+./atmel_mxt_ts.c:2378:		mxt_input_sync(data->input_dev);
+./atmel_mxt_ts.c:2379:		data->update_input = false;
+./atmel_mxt_ts.c:2392:	if (data->in_bootloader) {
+./atmel_mxt_ts.c:2394:		complete(&data->bl_completion);
+./atmel_mxt_ts.c:2400:	if (!data->object_table)
+./atmel_mxt_ts.c:2404:	if (!data->msg_buf)
+./atmel_mxt_ts.c:2408:	if (data->T44_address) {
+./atmel_mxt_ts.c:2428:		dev_err(&data->client->dev, "mxt_active_proc_thread invalid handle\n");
+./atmel_mxt_ts.c:2432:	set_bit(event,&data->busy);
+./atmel_mxt_ts.c:2433:	dev_dbg(&data->client->dev, "mxt_active_proc_thread event %d busy %lx\n", event, data->busy);
+./atmel_mxt_ts.c:2434:	if (test_bit(MXT_WK_ENABLE,&data->enable_wakeup)) {
+./atmel_mxt_ts.c:2436:			set_bit(MXT_EVENT_IRQ_FLAG,&data->busy);
+./atmel_mxt_ts.c:2438:	wake_up_interruptible(&data->wait);
+./atmel_mxt_ts.c:2452:	if(atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:2453:	board_disable_irq(data->pdata,data->irq);
+./atmel_mxt_ts.c:2454:		atomic_dec(&data->depth);
+./atmel_mxt_ts.c:2466:	if(atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:2468:		atomic_dec(&data->depth);
+./atmel_mxt_ts.c:2472:		//cancel_delayed_work_sync(&data->irq_work);
+./atmel_mxt_ts.c:2486:	struct mxt_platform_data *pdata = data->pdata;
+./atmel_mxt_ts.c:2491:    //dev_err(&data->client->dev, "zte atmel mxt  mxt_process_message_thread \n");
+./atmel_mxt_ts.c:2493:       // dev_err(&data->client->dev, "zte atmel mxt  while (!kthread_should_stop()) \n");
+./atmel_mxt_ts.c:2496:		mxt_plugin_pre_process(&data->plug,data->in_bootloader);
+./atmel_mxt_ts.c:2501:			data->wait, 
+./atmel_mxt_ts.c:2502:			test_bit(MXT_EVENT_IRQ,&data->busy)||test_bit(MXT_EVENT_EXTERN,&data->busy)||
+./atmel_mxt_ts.c:2506:		dev_dbg(&data->client->dev, "mxt_process_message_thread busy %lx suspend %d  boot %d interval %ld(0x%lx)\n",
+./atmel_mxt_ts.c:2507:			data->busy,
+./atmel_mxt_ts.c:2508:			data->suspended,
+./atmel_mxt_ts.c:2509:			data->in_bootloader,
+./atmel_mxt_ts.c:2514:			mxt_plugin_thread_stopped(&data->plug);
+./atmel_mxt_ts.c:2519:		if (test_and_clear_bit(MXT_EVENT_IRQ,&data->busy)) {
+./atmel_mxt_ts.c:2520:			iret = mxt_interrupt(data->irq, (void *)data);
+./atmel_mxt_ts.c:2523:				dev_err(&data->client->dev, "invalid irq occur, busy 0x%lx depth %d\n",
+./atmel_mxt_ts.c:2524:					data->busy,atomic_read(&data->depth));
+./atmel_mxt_ts.c:2528:			if(!atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:2529:				atomic_inc(&data->depth);
+./atmel_mxt_ts.c:2530:			board_enable_irq(pdata,data->irq);
+./atmel_mxt_ts.c:2531:           //  dev_err(&data->client->dev, "zte atmel mxt  board_enable_irq 1 \n");
+./atmel_mxt_ts.c:2535:		if (data->suspended) {
+./atmel_mxt_ts.c:2537:			if (test_bit(MXT_EVENT_EXTERN,&data->busy))
+./atmel_mxt_ts.c:2546:			clear_bit(MXT_EVENT_EXTERN,&data->busy);
+./atmel_mxt_ts.c:2547:			interval = (long)mxt_plugin_post_process(&data->plug,data->in_bootloader);
+./atmel_mxt_ts.c:2567:	reg = data->T6_address + cmd_offset;
+./atmel_mxt_ts.c:2569:	ret = mxt_write_reg(data->client, reg, value);
+./atmel_mxt_ts.c:2578:		ret = __mxt_read_reg(data->client, reg, 1, &command_register);
+./atmel_mxt_ts.c:2584:		dev_err(&data->client->dev, "Command failed!\n");
+./atmel_mxt_ts.c:2593:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2598:	INIT_COMPLETION(data->reset_completion);
+./atmel_mxt_ts.c:2604:	ret = mxt_wait_for_completion(data, &data->reset_completion,
+./atmel_mxt_ts.c:2619:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2620:	const struct mxt_platform_data *pdata = data->pdata;
+./atmel_mxt_ts.c:2621:	int index = /*data->current_index*/0;
+./atmel_mxt_ts.c:2623:	WARN_ON(!pdata->config_array);
+./atmel_mxt_ts.c:2625:	if (pdata->config_array) {
+./atmel_mxt_ts.c:2626:		error = __mxt_read_reg(data->client, data->T102_address + MXT_SELF_CHGTIME,
+./atmel_mxt_ts.c:2635:			if (val > pdata->config_array[index].self_chgtime_max)
+./atmel_mxt_ts.c:2640:			if (val < pdata->config_array[index].self_chgtime_min)
+./atmel_mxt_ts.c:2644:		error = __mxt_write_reg(data->client, data->T102_address + MXT_SELF_CHGTIME,
+./atmel_mxt_ts.c:2656:		if (data->selfcap_status.cause == 0x3)
+./atmel_mxt_ts.c:2668:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2670:	memset(&data->selfcap_status, 0x0, sizeof(data->selfcap_status));
+./atmel_mxt_ts.c:2672:	if (!data->T102_address) {
+./atmel_mxt_ts.c:2677:	error = __mxt_write_reg(data->client, data->T102_address + MXT_SELFCAP_CMD,
+./atmel_mxt_ts.c:2685:	if (data->selfcap_status.cause == 0x3) {
+./atmel_mxt_ts.c:2686:		if (data->selfcap_status.error_code & 0x02) {
+./atmel_mxt_ts.c:2691:		} else if (data->selfcap_status.error_code & 0x01) {
+./atmel_mxt_ts.c:2701:		error = __mxt_write_reg(data->client, data->T102_address + MXT_SELFCAP_CMD,
+./atmel_mxt_ts.c:2714:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2752:	data->config_crc = 0;
+./atmel_mxt_ts.c:2753:	INIT_COMPLETION(data->crc_completion);
+./atmel_mxt_ts.c:2759:	mxt_wait_for_completion(data, &data->crc_completion, MXT_CRC_TIMEOUT);
+./atmel_mxt_ts.c:2803:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:2808:				   data->T18_address + MXT_COMMS_CTRL,
+./atmel_mxt_ts.c:2813:	if (data->pdata->irqflags & IRQF_TRIGGER_LOW) {
+./atmel_mxt_ts.c:2820:				   data->T18_address + MXT_COMMS_CTRL,
+./atmel_mxt_ts.c:2828:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:2832:	if (data->pdata->irqflags & IRQF_TRIGGER_LOW)
+./atmel_mxt_ts.c:2835:	if (data->T18_address) {
+./atmel_mxt_ts.c:2837:					   data->T18_address + MXT_COMMS_CTRL,
+./atmel_mxt_ts.c:2847:	data->use_retrigen_workaround = true;
+./atmel_mxt_ts.c:2874:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:2894:	if (!data->cfg_name) {
+./atmel_mxt_ts.c:2899:	ret = request_firmware(&cfg, data->cfg_name, dev);
+./atmel_mxt_ts.c:2902:			data->cfg_name);
+./atmel_mxt_ts.c:2934:	if (cfg_info.family_id != data->info->family_id) {
+./atmel_mxt_ts.c:2940:	if (cfg_info.variant_id != data->info->variant_id) {
+./atmel_mxt_ts.c:2973:	if (info_crc == data->info_crc) {
+./atmel_mxt_ts.c:2974:		if (config_crc == 0 || data->config_crc == 0) {
+./atmel_mxt_ts.c:2976:		} else if (config_crc == data->config_crc) {
+./atmel_mxt_ts.c:2978:				 data->config_crc);
+./atmel_mxt_ts.c:2982:		if (mxt_plugin_cal_t37_check_and_calibrate(&data->plug, true) != 0)
+./atmel_mxt_ts.c:2990:				 data->config_crc, config_crc);
+./atmel_mxt_ts.c:2995:			data->info_crc, info_crc);
+./atmel_mxt_ts.c:3000:		+ data->info->object_num * sizeof(struct mxt_object)
+./atmel_mxt_ts.c:3002:	config_mem_size = data->mem_size - cfg_start_ofs;
+./atmel_mxt_ts.c:3113:		ret = __mxt_write_reg(data->client,reg,size,object_mem);
+./atmel_mxt_ts.c:3122:	if (data->T7_address < cfg_start_ofs) {
+./atmel_mxt_ts.c:3124:			data->T7_address, cfg_start_ofs);
+./atmel_mxt_ts.c:3130:					   data->T7_address - cfg_start_ofs,
+./atmel_mxt_ts.c:3138:	mxt_plugin_hook_reg_init(&data->plug, config_mem, config_mem_size, cfg_start_ofs);
+./atmel_mxt_ts.c:3149:		ret = __mxt_write_reg(data->client,
+./atmel_mxt_ts.c:3188:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:3196:		new_config = &data->t7_cfg;
+./atmel_mxt_ts.c:3199:	mxt_plugin_hook_set_t7(&data->plug, sleep == MXT_POWER_CFG_DEEPSLEEP);
+./atmel_mxt_ts.c:3201:	error = __mxt_write_reg(data->client, data->T7_address,
+./atmel_mxt_ts.c:3202:			sizeof(data->t7_cfg),
+./atmel_mxt_ts.c:3217:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:3222:	error = __mxt_read_reg(data->client, data->T7_address,
+./atmel_mxt_ts.c:3223:				sizeof(data->t7_cfg), &data->t7_cfg);
+./atmel_mxt_ts.c:3227:	if (data->t7_cfg.active == 0 || data->t7_cfg.idle == 0) {
+./atmel_mxt_ts.c:3235:			data->t7_cfg.active = 20;
+./atmel_mxt_ts.c:3236:			data->t7_cfg.idle = 100;
+./atmel_mxt_ts.c:3241:				data->t7_cfg.active, data->t7_cfg.idle);
+./atmel_mxt_ts.c:3248:	struct mxt_platform_data *pdata = data->pdata;
+./atmel_mxt_ts.c:3251:	if(!atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:3252:		atomic_inc(&data->depth);
+./atmel_mxt_ts.c:3253:	board_enable_irq(pdata,data->irq);
+./atmel_mxt_ts.c:3255:    dev_err(&data->client->dev, "zte atmel mxt  board_enable_irq 2 \n");
+./atmel_mxt_ts.c:3258:	if (data->use_retrigen_workaround) {
+./atmel_mxt_ts.c:3272:	if (data->properties_kobj) {
+./atmel_mxt_ts.c:3273:		kobject_put(data->properties_kobj);
+./atmel_mxt_ts.c:3274:		data->properties_kobj = NULL;
+./atmel_mxt_ts.c:3278:	if (data->input_dev) {
+./atmel_mxt_ts.c:3279:		input_unregister_device(data->input_dev);
+./atmel_mxt_ts.c:3280:		data->input_dev = NULL;
+./atmel_mxt_ts.c:3288:	mxt_plugin_force_stop(&data->plug);
+./atmel_mxt_ts.c:3289:	mxt_plugin_deinit(&data->plug);
+./atmel_mxt_ts.c:3291:	kfree(data->raw_info_block);
+./atmel_mxt_ts.c:3292:	data->object_table = NULL;
+./atmel_mxt_ts.c:3293:	data->info = NULL;
+./atmel_mxt_ts.c:3294:	data->raw_info_block = NULL;
+./atmel_mxt_ts.c:3295:	kfree(data->msg_buf);
+./atmel_mxt_ts.c:3296:	data->msg_buf = NULL;
+./atmel_mxt_ts.c:3300:	data->enable_reporting = false;
+./atmel_mxt_ts.c:3301:	data->T5_address = 0;
+./atmel_mxt_ts.c:3302:	data->T5_msg_size = 0;
+./atmel_mxt_ts.c:3303:	data->T6_reportid = 0;
+./atmel_mxt_ts.c:3304:	data->T7_address = 0;
+./atmel_mxt_ts.c:3305:	data->T8_address = 0;
+./atmel_mxt_ts.c:3306:	data->T9_address = 0;
+./atmel_mxt_ts.c:3307:	data->T9_reportid_min = 0;
+./atmel_mxt_ts.c:3308:	data->T9_reportid_max = 0;
+./atmel_mxt_ts.c:3309:	data->T15_address = 0;
+./atmel_mxt_ts.c:3310:	data->T15_reportid_min = 0;
+./atmel_mxt_ts.c:3311:	data->T15_reportid_max = 0;
+./atmel_mxt_ts.c:3312:	data->T18_address = 0;
+./atmel_mxt_ts.c:3313:	data->T19_address = 0;
+./atmel_mxt_ts.c:3314:	data->T19_reportid = 0;
+./atmel_mxt_ts.c:3315:	data->T24_address = 0;
+./atmel_mxt_ts.c:3316:	data->T24_reportid = 0;
+./atmel_mxt_ts.c:3317:	data->T25_address = 0;
+./atmel_mxt_ts.c:3318:	data->T25_reportid = 0;
+./atmel_mxt_ts.c:3319:	data->T37_address = 0;
+./atmel_mxt_ts.c:3320:	data->T38_address = 0;
+./atmel_mxt_ts.c:3321:	data->T40_address = 0;
+./atmel_mxt_ts.c:3322:	data->T42_address = 0;
+./atmel_mxt_ts.c:3323:	data->T42_reportid_min = 0;
+./atmel_mxt_ts.c:3324:	data->T42_reportid_max = 0;
+./atmel_mxt_ts.c:3325:	data->T44_address = 0;
+./atmel_mxt_ts.c:3326:	data->T46_address = 0;
+./atmel_mxt_ts.c:3327:	data->T47_address = 0;
+./atmel_mxt_ts.c:3328:	data->T48_reportid = 0;
+./atmel_mxt_ts.c:3329:	data->T55_address = 0;
+./atmel_mxt_ts.c:3330:	data->T56_address = 0;
+./atmel_mxt_ts.c:3331:	data->T61_address = 0;
+./atmel_mxt_ts.c:3332:	data->T61_reportid_min = 0;
+./atmel_mxt_ts.c:3333:	data->T61_reportid_max = 0;
+./atmel_mxt_ts.c:3334:	data->T61_instances = 0;
+./atmel_mxt_ts.c:3335:	data->T63_reportid_min = 0;
+./atmel_mxt_ts.c:3336:	data->T63_reportid_max = 0;
+./atmel_mxt_ts.c:3337:	data->T65_address = 0;
+./atmel_mxt_ts.c:3338:	data->T71_address = 0;
+./atmel_mxt_ts.c:3339:	data->T72_address = 0;
+./atmel_mxt_ts.c:3340:	data->T72_reportid_min = 0;
+./atmel_mxt_ts.c:3341:	data->T72_reportid_max = 0;
+./atmel_mxt_ts.c:3342:	data->T78_address = 0;
+./atmel_mxt_ts.c:3343:	data->T80_address = 0;
+./atmel_mxt_ts.c:3344:	data->T81_address = 0;
+./atmel_mxt_ts.c:3345:	data->T81_reportid = 0;
+./atmel_mxt_ts.c:3346:	data->T92_address = 0;
+./atmel_mxt_ts.c:3347:	data->T92_reportid = 0;
+./atmel_mxt_ts.c:3348:	data->T93_address = 0;
+./atmel_mxt_ts.c:3349:	data->T93_reportid = 0;
+./atmel_mxt_ts.c:3350:	data->T100_address = 0;
+./atmel_mxt_ts.c:3351:	data->T100_reportid_min = 0;
+./atmel_mxt_ts.c:3352:	data->T100_reportid_max = 0;
+./atmel_mxt_ts.c:3353:	data->T102_address = 0;
+./atmel_mxt_ts.c:3354:	data->T102_reportid = 0;
+./atmel_mxt_ts.c:3355:	data->T104_address = 0;
+./atmel_mxt_ts.c:3356:	data->max_reportid = 0;
+./atmel_mxt_ts.c:3362:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:3369:	data->mem_size = 0;
+./atmel_mxt_ts.c:3370:	for (i = 0; i < data->info->object_num; i++) {
+./atmel_mxt_ts.c:3386:		/*dev_dbg(&data->client->dev,
+./atmel_mxt_ts.c:3394:			if (data->info->family_id == 0x80) {
+./atmel_mxt_ts.c:3397:				data->T5_msg_size = mxt_obj_size(object);
+./atmel_mxt_ts.c:3400:				data->T5_msg_size = mxt_obj_size(object) - 1;
+./atmel_mxt_ts.c:3402:			data->T5_address = object->start_address;
+./atmel_mxt_ts.c:3404:			data->T6_reportid = min_id;
+./atmel_mxt_ts.c:3405:			data->T6_address = object->start_address;
+./atmel_mxt_ts.c:3408:			data->T7_address = object->start_address;
+./atmel_mxt_ts.c:3411:			data->T8_address = object->start_address;
+./atmel_mxt_ts.c:3415:			data->T9_reportid_min = min_id;
+./atmel_mxt_ts.c:3416:			data->T9_reportid_max = min_id +
+./atmel_mxt_ts.c:3418:			data->T9_address = object->start_address;
+./atmel_mxt_ts.c:3419:			data->num_touchids = object->num_report_ids;
+./atmel_mxt_ts.c:3422:			data->T15_reportid_min = min_id;
+./atmel_mxt_ts.c:3423:			data->T15_reportid_max = max_id;
+./atmel_mxt_ts.c:3424:			data->T15_address = object->start_address;
+./atmel_mxt_ts.c:3427:			data->T18_address = object->start_address;
+./atmel_mxt_ts.c:3430:			data->T19_address = object->start_address;
+./atmel_mxt_ts.c:3431:			data->T19_reportid = min_id;
+./atmel_mxt_ts.c:3434:			data->T24_address = object->start_address;
+./atmel_mxt_ts.c:3435:			data->T24_reportid = min_id;
+./atmel_mxt_ts.c:3438:			data->T25_address = object->start_address;
+./atmel_mxt_ts.c:3439:			data->T25_reportid = min_id;
+./atmel_mxt_ts.c:3442:			data->T37_address = object->start_address;
+./atmel_mxt_ts.c:3445:			data->T38_address = object->start_address;
+./atmel_mxt_ts.c:3448:			data->T40_address = object->start_address;
+./atmel_mxt_ts.c:3451:			data->T42_address = object->start_address;
+./atmel_mxt_ts.c:3452:			data->T42_reportid_min = min_id;
+./atmel_mxt_ts.c:3453:			data->T42_reportid_max = max_id;
+./atmel_mxt_ts.c:3456:			data->T44_address = object->start_address;
+./atmel_mxt_ts.c:3459:			data->T46_address = object->start_address;
+./atmel_mxt_ts.c:3462:			data->T47_address = object->start_address;
+./atmel_mxt_ts.c:3465:			data->T48_reportid = min_id;
+./atmel_mxt_ts.c:3468:			data->T55_address = object->start_address;
+./atmel_mxt_ts.c:3471:			data->T56_address = object->start_address;
+./atmel_mxt_ts.c:3475:			data->T61_address = object->start_address;
+./atmel_mxt_ts.c:3476:			data->T61_reportid_min = min_id;
+./atmel_mxt_ts.c:3477:			data->T61_reportid_max = max_id;
+./atmel_mxt_ts.c:3478:			data->T61_instances = mxt_obj_instances(object);
+./atmel_mxt_ts.c:3482:			data->T63_reportid_min = min_id;
+./atmel_mxt_ts.c:3483:			data->T63_reportid_max = min_id;
+./atmel_mxt_ts.c:3484:			data->num_stylusids = 1;
+./atmel_mxt_ts.c:3487:			data->T65_address = object->start_address;
+./atmel_mxt_ts.c:3490:			data->T71_address = object->start_address;
+./atmel_mxt_ts.c:3493:			data->T72_address = object->start_address;
+./atmel_mxt_ts.c:3494:			data->T72_reportid_min = min_id;
+./atmel_mxt_ts.c:3495:			data->T72_reportid_max = max_id;
+./atmel_mxt_ts.c:3498:			data->T78_address = object->start_address;
+./atmel_mxt_ts.c:3501:			data->T80_address = object->start_address;
+./atmel_mxt_ts.c:3504:			data->T81_address = object->start_address;
+./atmel_mxt_ts.c:3505:			data->T81_reportid = min_id;
+./atmel_mxt_ts.c:3508:			data->T92_address = object->start_address;
+./atmel_mxt_ts.c:3509:			data->T92_reportid = min_id;
+./atmel_mxt_ts.c:3512:			data->T93_address = object->start_address;
+./atmel_mxt_ts.c:3513:			data->T93_reportid = min_id;
+./atmel_mxt_ts.c:3516:			data->T100_reportid_min = min_id;
+./atmel_mxt_ts.c:3517:			data->T100_reportid_max = max_id;
+./atmel_mxt_ts.c:3518:			data->T100_address = object->start_address;
+./atmel_mxt_ts.c:3520:			data->num_touchids = object->num_report_ids - 2;
+./atmel_mxt_ts.c:3523:			data->T102_address = object->start_address;
+./atmel_mxt_ts.c:3524:			data->T102_reportid = min_id;
+./atmel_mxt_ts.c:3527:			data->T104_address = object->start_address;
+./atmel_mxt_ts.c:3534:		if (end_address >= data->mem_size)
+./atmel_mxt_ts.c:3535:			data->mem_size = end_address + 1;
+./atmel_mxt_ts.c:3539:	data->max_reportid = reportid;
+./atmel_mxt_ts.c:3542:	if (data->T44_address && (data->T5_address != data->T44_address + 1)) {
+./atmel_mxt_ts.c:3547:	data->msg_buf = kcalloc(data->max_reportid,
+./atmel_mxt_ts.c:3548:				data->T5_msg_size, GFP_KERNEL);
+./atmel_mxt_ts.c:3549:	if (!data->msg_buf) {
+./atmel_mxt_ts.c:3559:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:3568:	if (data->raw_info_block != NULL)
+./atmel_mxt_ts.c:3606:	data->info_crc = crc_ptr[0] | (crc_ptr[1] << 8) | (crc_ptr[2] << 16);
+./atmel_mxt_ts.c:3613:	if ((data->info_crc == 0) || (data->info_crc != calculated_crc)) {
+./atmel_mxt_ts.c:3616:			calculated_crc, data->info_crc);
+./atmel_mxt_ts.c:3622:	data->raw_info_block = buf;
+./atmel_mxt_ts.c:3623:	data->info = (struct mxt_info *)buf;
+./atmel_mxt_ts.c:3627:		 data->info->family_id, data->info->variant_id,
+./atmel_mxt_ts.c:3628:		 data->info->version >> 4, data->info->version & 0xf,
+./atmel_mxt_ts.c:3629:		 data->info->build, data->info->object_num);
+./atmel_mxt_ts.c:3639:	data->object_table = (struct mxt_object *)(buf + MXT_OBJECT_START);
+./atmel_mxt_ts.c:3649:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:3682:		data->max_x = range.y;
+./atmel_mxt_ts.c:3683:		data->max_y = range.x;
+./atmel_mxt_ts.c:3685:		data->max_x = range.x;
+./atmel_mxt_ts.c:3686:		data->max_y = range.y;
+./atmel_mxt_ts.c:3690:	if (data->pdata->max_y_t < data->max_y)
+./atmel_mxt_ts.c:3691:		data->pdata->max_y_t = data->max_y;
+./atmel_mxt_ts.c:3694:		 "Touchscreen size X%uY%u\n", data->max_x, data->max_y);
+./atmel_mxt_ts.c:3702:    struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:3704:	gpio_set_value(mxt_rst_number, 0);//gpio_set_value(data->pdata->gpio_reset, 0);
+./atmel_mxt_ts.c:3706:	rc = regulator_enable(data->reg_vdd);
+./atmel_mxt_ts.c:3711:	rc = regulator_enable(data->reg_avdd);
+./atmel_mxt_ts.c:3718:	INIT_COMPLETION(data->bl_completion);
+./atmel_mxt_ts.c:3719:	gpio_set_value(mxt_rst_number, 1);//gpio_set_value(data->pdata->gpio_reset, 1);
+./atmel_mxt_ts.c:3720:	mxt_wait_for_completion(data, &data->bl_completion, MXT_POWERON_DELAY);
+./atmel_mxt_ts.c:3725:	regulator_disable(data->reg_vdd);
+./atmel_mxt_ts.c:3726:	regulator_disable(data->reg_avdd);
+./atmel_mxt_ts.c:3731:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:3739:	board_gpio_init(data->pdata);
+./atmel_mxt_ts.c:3740:	if(atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:3741:		board_disable_irq(data->pdata,data->irq);
+./atmel_mxt_ts.c:3742:			atomic_dec(&data->depth);
+./atmel_mxt_ts.c:3745:	if (!mxt_rst_number) {//if (!data->pdata->gpio_reset) {
+./atmel_mxt_ts.c:3750:	data->reg_vdd = regulator_get(dev, "vdd");
+./atmel_mxt_ts.c:3751:	if (IS_ERR(data->reg_vdd)) {
+./atmel_mxt_ts.c:3752:		error = PTR_ERR(data->reg_vdd);
+./atmel_mxt_ts.c:3757:	data->reg_avdd = regulator_get(dev, "avdd");
+./atmel_mxt_ts.c:3758:	if (IS_ERR(data->reg_vdd)) {
+./atmel_mxt_ts.c:3759:		error = PTR_ERR(data->reg_vdd);
+./atmel_mxt_ts.c:3765:	data->use_regulator = false;
+./atmel_mxt_ts.c:3772:		regulator_put(data->reg_vdd);
+./atmel_mxt_ts.c:3774:	data->reg_vdd = NULL;
+./atmel_mxt_ts.c:3775:	data->reg_avdd = NULL;
+./atmel_mxt_ts.c:3776:	data->use_regulator = false;
+./atmel_mxt_ts.c:3781:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:3832:		data->max_x = range_y;
+./atmel_mxt_ts.c:3833:		data->max_y = range_x;
+./atmel_mxt_ts.c:3835:		data->max_x = range_x;
+./atmel_mxt_ts.c:3836:		data->max_y = range_y;
+./atmel_mxt_ts.c:3840:	if (data->pdata->max_y_t < data->max_y)
+./atmel_mxt_ts.c:3841:		data->pdata->max_y_t = data->max_y;
+./atmel_mxt_ts.c:3848:		data->t100_aux_vect = aux++;
+./atmel_mxt_ts.c:3851:		data->t100_aux_ampl = aux++;
+./atmel_mxt_ts.c:3854:		data->t100_aux_area = aux++;
+./atmel_mxt_ts.c:3857:		 "T100 Touchscreen size X%uY%u\n", data->max_x, data->max_y);
+./atmel_mxt_ts.c:3867:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:3884:	input_dev->phys = data->phys;
+./atmel_mxt_ts.c:3886:	input_dev->dev.parent = &data->client->dev;
+./atmel_mxt_ts.c:3898:				 0, data->max_x, 0, 0);
+./atmel_mxt_ts.c:3901:				 0, data->pdata->max_y_t, 0, 0);
+./atmel_mxt_ts.c:3904:				 0, data->max_y, 0, 0);
+./atmel_mxt_ts.c:3907:	if (data->t100_aux_ampl)
+./atmel_mxt_ts.c:3912:	error = input_mt_init_slots(input_dev, data->num_touchids,0);
+./atmel_mxt_ts.c:3920:				 0, data->max_x, 0, 0);
+./atmel_mxt_ts.c:3923:				 0, data->pdata->max_y_t, 0, 0);
+./atmel_mxt_ts.c:3926:				 0, data->max_y, 0, 0);
+./atmel_mxt_ts.c:3929:	if (data->t100_aux_area)
+./atmel_mxt_ts.c:3933:	if (data->t100_aux_ampl)
+./atmel_mxt_ts.c:3937:	if (data->t100_aux_vect)
+./atmel_mxt_ts.c:3943:	if (data->pdata->t15_num_keys)
+./atmel_mxt_ts.c:3945:	if (data->T15_reportid_min)
+./atmel_mxt_ts.c:3948:		data->t15_keystatus = 0;
+./atmel_mxt_ts.c:3950:		for (i = 0; i < data->pdata->t15_num_keys; i++) {
+./atmel_mxt_ts.c:3951:			set_bit(data->pdata->t15_keymap[i], input_dev->keybit);
+./atmel_mxt_ts.c:3953:						 data->pdata->t15_keymap[i]);
+./atmel_mxt_ts.c:3965:	data->input_dev = input_dev;
+./atmel_mxt_ts.c:3979:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:3994:		board_gpio_init(data->pdata);
+./atmel_mxt_ts.c:4029:				data->in_bootloader = true;
+./atmel_mxt_ts.c:4058:	board_init_irq(data->pdata);
+./atmel_mxt_ts.c:4060:	//board_disable_irq(data->pdata,data->irq);
+./atmel_mxt_ts.c:4075:	struct i2c_client *client = data->client;
+./atmel_mxt_ts.c:4107:	if (data->T9_reportid_min) {
+./atmel_mxt_ts.c:4111:	} else if (data->T100_reportid_min) {
+./atmel_mxt_ts.c:4127:	data->properties_kobj = create_virtual_key_object(&client->dev);
+./atmel_mxt_ts.c:4129:	data->enable_reporting = true;
+./atmel_mxt_ts.c:4139:	if (!data->info)
+./atmel_mxt_ts.c:4143:			 data->info->version >> 4, data->info->version & 0xf,
+./atmel_mxt_ts.c:4144:			 data->info->build);
+./atmel_mxt_ts.c:4153:	if (!data->info)
+./atmel_mxt_ts.c:4157:			data->info->family_id, data->info->variant_id);
+./atmel_mxt_ts.c:4194:	for (i = 0; i < data->info->object_num; i++) {
+./atmel_mxt_ts.c:4195:		object = data->object_table + i;
+./atmel_mxt_ts.c:4207:			error = __mxt_read_reg(data->client, addr, size, obuf);
+./atmel_mxt_ts.c:4245:	struct mxt_platform_data *pdata = data->pdata;
+./atmel_mxt_ts.c:4253:	if (!data->fw_name)
+./atmel_mxt_ts.c:4256:	dev_info(dev, "mxt_load_fw %s\n",data->fw_name);
+./atmel_mxt_ts.c:4258:	ret = request_firmware(&fw, data->fw_name, dev);
+./atmel_mxt_ts.c:4260:		dev_err(dev, "Unable to open firmware %s\n", data->fw_name);
+./atmel_mxt_ts.c:4269:	if (data->suspended) {
+./atmel_mxt_ts.c:4270:		if (data->use_regulator)
+./atmel_mxt_ts.c:4273:		if(!atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:4274:			atomic_inc(&data->depth);
+./atmel_mxt_ts.c:4275:		board_enable_irq(pdata,data->irq);
+./atmel_mxt_ts.c:4278:		data->suspended = false;
+./atmel_mxt_ts.c:4280:	if (data->in_bootloader) {
+./atmel_mxt_ts.c:4284:			data->in_bootloader = false;
+./atmel_mxt_ts.c:4288:	if (!data->in_bootloader) {
+./atmel_mxt_ts.c:4292:		data->in_bootloader = true;
+./atmel_mxt_ts.c:4316:			data->in_bootloader = false;
+./atmel_mxt_ts.c:4321:	if(!atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:4322:		atomic_inc(&data->depth);
+./atmel_mxt_ts.c:4323:		board_enable_irq(pdata,data->irq);
+./atmel_mxt_ts.c:4327:	INIT_COMPLETION(data->bl_completion);
+./atmel_mxt_ts.c:4335:			data->in_bootloader = false;
+./atmel_mxt_ts.c:4338:		complete(&data->bl_completion);
+./atmel_mxt_ts.c:4345:			data->in_bootloader = false;
+./atmel_mxt_ts.c:4389:	INIT_COMPLETION(data->bl_completion);
+./atmel_mxt_ts.c:4390:	ret = mxt_wait_for_completion(data, &data->bl_completion,
+./atmel_mxt_ts.c:4401:	INIT_COMPLETION(data->bl_completion);
+./atmel_mxt_ts.c:4402:	ret = mxt_wait_for_completion(data, &data->bl_completion,
+./atmel_mxt_ts.c:4405:	data->in_bootloader = false;
+./atmel_mxt_ts.c:4408:	if(atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:4409:		board_disable_irq(data->pdata,data->irq);
+./atmel_mxt_ts.c:4410:		atomic_dec(&data->depth);
+./atmel_mxt_ts.c:4413:	if(test_and_clear_bit(MXT_EVENT_IRQ,&data->busy)) {
+./atmel_mxt_ts.c:4417:	data->busy = 0;
+./atmel_mxt_ts.c:4453:			(u8)(data->client->addr & 0x7f),
+./atmel_mxt_ts.c:4454:			(data->t19_msg[0]>>2) & 0xf);
+./atmel_mxt_ts.c:4506:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:4510:	if (data->info == NULL)
+./atmel_mxt_ts.c:4514:		   data->info->family_id,
+./atmel_mxt_ts.c:4515:		   data->info->variant_id,
+./atmel_mxt_ts.c:4516:		   (data->info->version & 0xF0) >> 4,
+./atmel_mxt_ts.c:4517:		   (data->info->version & 0x0F),
+./atmel_mxt_ts.c:4518:		   data->info->build);
+./atmel_mxt_ts.c:4525:	family_id = data->info->family_id;
+./atmel_mxt_ts.c:4526:	variant_id = data->info->variant_id;
+./atmel_mxt_ts.c:4533:		if(data->info->family_id != family_id ||
+./atmel_mxt_ts.c:4534:			data->info->variant_id != variant_id) {
+./atmel_mxt_ts.c:4553:	error = mxt_update_file_name(dev, &data->fw_name, buf, count, false);
+./atmel_mxt_ts.c:4557:	error = mxt_check_firmware_version(data,data->fw_name);
+./atmel_mxt_ts.c:4561:	error = mxt_update_cfg_name_by_fw_name(dev, &data->cfg_name, data->fw_name, strlen(data->fw_name));
+./atmel_mxt_ts.c:4566:	mutex_lock(&data->access_mutex);
+./atmel_mxt_ts.c:4568:	mutex_unlock(&data->access_mutex);
+./atmel_mxt_ts.c:4575:		data->suspended = false;
+./atmel_mxt_ts.c:4595:	if (data->in_bootloader) {
+./atmel_mxt_ts.c:4600:	if (!data->object_table) {
+./atmel_mxt_ts.c:4605:	ret = mxt_update_file_name(dev, &data->cfg_name, buf, count, data->alt_chip);
+./atmel_mxt_ts.c:4609:	data->enable_reporting = false;
+./atmel_mxt_ts.c:4612:		if (!(test_bit(MXT_EVENT_IRQ,&data->busy)||test_bit(MXT_EVENT_EXTERN,&data->busy)))
+./atmel_mxt_ts.c:4619:	if(test_and_clear_bit(MXT_EVENT_IRQ,&data->busy)) {
+./atmel_mxt_ts.c:4623:	data->busy = 0;
+./atmel_mxt_ts.c:4626:	mxt_plugin_force_stop(&data->plug);
+./atmel_mxt_ts.c:4627:	mxt_plugin_deinit(&data->plug);
+./atmel_mxt_ts.c:4631:	if (data->suspended) {
+./atmel_mxt_ts.c:4632:		if (data->use_regulator)
+./atmel_mxt_ts.c:4639:		data->suspended = false;
+./atmel_mxt_ts.c:4663:	c = data->debug_enabled ? '1' : '0';
+./atmel_mxt_ts.c:4699:		data->debug_enabled = (i == 1);
+./atmel_mxt_ts.c:4715:	c = data->in_bootloader ? '1' : '0';
+./atmel_mxt_ts.c:4726:		data->in_bootloader = (i == 1);
+./atmel_mxt_ts.c:4739:	if (off >= data->mem_size)
+./atmel_mxt_ts.c:4742:	if (off + *count > data->mem_size)
+./atmel_mxt_ts.c:4743:		*count = data->mem_size - off;
+./atmel_mxt_ts.c:4762:	mutex_lock(&data->access_mutex);
+./atmel_mxt_ts.c:4765:		ret = __mxt_read_reg(data->client, off, count, buf);
+./atmel_mxt_ts.c:4767:	mutex_unlock(&data->access_mutex);
+./atmel_mxt_ts.c:4784:	mutex_lock(&data->access_mutex);
+./atmel_mxt_ts.c:4787:		ret = __mxt_write_reg(data->client, off, count, buf);
+./atmel_mxt_ts.c:4789:	mutex_unlock(&data->access_mutex);
+./atmel_mxt_ts.c:4860:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:4867:	num_mt_slots = data->num_touchids + data->num_stylusids;
+./atmel_mxt_ts.c:4869:	mxt_plugin_hook_reset_slots(&data->plug);
+./atmel_mxt_ts.c:4882:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:4885:	if (!data->suspended || data->in_bootloader)
+./atmel_mxt_ts.c:4890:	if (data->use_regulator) {
+./atmel_mxt_ts.c:4895:		if (test_bit(MXT_WK_ENABLE,&data->enable_wakeup)) {
+./atmel_mxt_ts.c:4896:			if (test_and_clear_bit(MXT_EVENT_IRQ_FLAG,&data->busy)) {
+./atmel_mxt_ts.c:4898:				if (!test_bit(MXT_WK_DETECTED,&data->enable_wakeup)) {
+./atmel_mxt_ts.c:4908:		ret = mxt_plugin_wakeup_disable(&data->plug);
+./atmel_mxt_ts.c:4915:		if (mxt_plugin_cal_t37_check_and_calibrate(&data->plug, false) != 0)
+./atmel_mxt_ts.c:4919:		mxt_plugin_start(&data->plug, resume);
+./atmel_mxt_ts.c:4924:	data->enable_wakeup = 0;
+./atmel_mxt_ts.c:4925:	data->enable_reporting = true;
+./atmel_mxt_ts.c:4926:	data->suspended = false;
+./atmel_mxt_ts.c:4931:		board_disable_irq_wake(data->pdata,data->irq);
+./atmel_mxt_ts.c:4937:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:4938:	struct mxt_platform_data *pdata = data->pdata;
+./atmel_mxt_ts.c:4941:	if (data->suspended || data->in_bootloader)
+./atmel_mxt_ts.c:4946:	if(atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:4947:		board_disable_irq(data->pdata,data->irq);
+./atmel_mxt_ts.c:4948:		atomic_dec(&data->depth);
+./atmel_mxt_ts.c:4950:	data->enable_reporting = false;
+./atmel_mxt_ts.c:4952:	if (data->use_regulator)
+./atmel_mxt_ts.c:4957:		mxt_plugin_stop(&data->plug,suspend);
+./atmel_mxt_ts.c:4963:		ret = mxt_plugin_wakeup_enable(&data->plug);
+./atmel_mxt_ts.c:4969:			if(!atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:4970:				atomic_inc(&data->depth);
+./atmel_mxt_ts.c:4971:				board_enable_irq(pdata,data->irq);
+./atmel_mxt_ts.c:4973:			board_enable_irq_wake(data->pdata,data->irq);
+./atmel_mxt_ts.c:4974:			set_bit(MXT_WK_ENABLE,&data->enable_wakeup);
+./atmel_mxt_ts.c:4975:			clear_bit(MXT_EVENT_IRQ_FLAG,&data->busy);
+./atmel_mxt_ts.c:4981:	data->suspended = true;
+./atmel_mxt_ts.c:4987:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:5003:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:5028:	pdata->gpio_reset = of_get_named_gpio_flags(dev->of_node,
+./atmel_mxt_ts.c:5032:    pdata->gpio_reset = mxt_rst_number;
+./atmel_mxt_ts.c:5033:	printk("--------pdata->reset_gpio------------: %ud\n",mxt_rst_number);
+./atmel_mxt_ts.c:5038:    pdata->gpio_irq = mxt_int_number;
+./atmel_mxt_ts.c:5039:    printk("--------pdata->irq_gpio------------: %ud\n",mxt_int_number);
+./atmel_mxt_ts.c:5046:				&pdata->cfg_name);
+./atmel_mxt_ts.c:5050:				&pdata->input_name);
+./atmel_mxt_ts.c:5056:		pdata->t19_num_keys = proplen / sizeof(u32);
+./atmel_mxt_ts.c:5059:			pdata->t19_num_keys * sizeof(u32), GFP_KERNEL);
+./atmel_mxt_ts.c:5063:		pdata->t19_keymap = keymap;
+./atmel_mxt_ts.c:5066:			"linux,gpio-keymap", keymap, pdata->t19_num_keys);
+./atmel_mxt_ts.c:5081:	data->pdata = dev_get_platdata(&data->client->dev);
+./atmel_mxt_ts.c:5082://    dev_info(&data->client->dev, "%s: lee atmel driver: mxt_handle_pdata \n",__func__);
+./atmel_mxt_ts.c:5085:	if (data->pdata) {
+./atmel_mxt_ts.c:5086:		if (data->pdata->cfg_name)
+./atmel_mxt_ts.c:5087:			mxt_update_file_name(&data->client->dev,
+./atmel_mxt_ts.c:5088:						 &data->cfg_name,
+./atmel_mxt_ts.c:5089:						 data->pdata->cfg_name,
+./atmel_mxt_ts.c:5090:						 strlen(data->pdata->cfg_name),
+./atmel_mxt_ts.c:5096:	data->pdata = kzalloc(sizeof(*data->pdata), GFP_KERNEL);
+./atmel_mxt_ts.c:5097:	if (!data->pdata) {
+./atmel_mxt_ts.c:5098:		dev_err(&data->client->dev, "Failed to allocate pdata\n");
+./atmel_mxt_ts.c:5103:	data->pdata->irqflags = IRQF_TRIGGER_LOW;
+./atmel_mxt_ts.c:5110:	struct device *dev = &data->client->dev;
+./atmel_mxt_ts.c:5111:	const struct mxt_platform_data *pdata = data->pdata;
+./atmel_mxt_ts.c:5128:	input_dev->phys = data->phys;
+./atmel_mxt_ts.c:5139:	if (pdata->t19_num_keys) {
+./atmel_mxt_ts.c:5142:		for (i = 0; i < pdata->t19_num_keys; i++)
+./atmel_mxt_ts.c:5143:			if (pdata->t19_keymap[i] != KEY_RESERVED)
+./atmel_mxt_ts.c:5145:							 pdata->t19_keymap[i]);
+./atmel_mxt_ts.c:5164:				 0, data->max_x, 0, 0);
+./atmel_mxt_ts.c:5167:				 0, data->pdata->max_y_t, 0, 0);
+./atmel_mxt_ts.c:5170:				 0, data->max_y, 0, 0);
+./atmel_mxt_ts.c:5176:	num_mt_slots = data->num_touchids + data->num_stylusids;
+./atmel_mxt_ts.c:5186:				 0, data->max_x, 0, 0);
+./atmel_mxt_ts.c:5189:				 0, data->pdata->max_y_t, 0, 0);
+./atmel_mxt_ts.c:5192:				 0, data->max_y, 0, 0);
+./atmel_mxt_ts.c:5200:	if (data->T63_reportid_min) {
+./atmel_mxt_ts.c:5209:	if (data->pdata->t15_num_keys)
+./atmel_mxt_ts.c:5211:	if (data->T15_reportid_min)
+./atmel_mxt_ts.c:5214:		data->t15_keystatus = 0;
+./atmel_mxt_ts.c:5216:		for (i = 0; i < data->pdata->t15_num_keys; i++) {
+./atmel_mxt_ts.c:5217:			set_bit(data->pdata->t15_keymap[i], input_dev->keybit);
+./atmel_mxt_ts.c:5219:						 data->pdata->t15_keymap[i]);
+./atmel_mxt_ts.c:5231:	data->input_dev = input_dev;
+./atmel_mxt_ts.c:5264:	snprintf(data->phys, sizeof(data->phys), "i2c-%u-%04x/input0",
+./atmel_mxt_ts.c:5267:	data->client = client;
+./atmel_mxt_ts.c:5268:	data->irq = client->irq;
+./atmel_mxt_ts.c:5275:	mutex_init(&data->dma_access_mutex);
+./atmel_mxt_ts.c:5276:	data->i2c_dma_va = (u8 *)dma_alloc_coherent(NULL, PAGE_SIZE * 2, &data->i2c_dma_pa, GFP_KERNEL);
+./atmel_mxt_ts.c:5277:	if (!data->i2c_dma_va)	{
+./atmel_mxt_ts.c:5285:	if (!data->pdata && client->dev.of_node)
+./atmel_mxt_ts.c:5286:		data->pdata = mxt_parse_dt(client);
+./atmel_mxt_ts.c:5288:	if (!data->pdata)
+./atmel_mxt_ts.c:5293:	init_completion(&data->bl_completion);
+./atmel_mxt_ts.c:5294:	init_completion(&data->reset_completion);
+./atmel_mxt_ts.c:5295:	init_completion(&data->crc_completion);
+./atmel_mxt_ts.c:5296:	mutex_init(&data->debug_msg_lock);
+./atmel_mxt_ts.c:5297:	mutex_init(&data->access_mutex);
+./atmel_mxt_ts.c:5298:	atomic_set(&data->depth,1);
+./atmel_mxt_ts.c:5303:    init_waitqueue_head(&data->wait);
+./atmel_mxt_ts.c:5304:	data->irq_tsk = kthread_run(mxt_process_message_thread, data,
+./atmel_mxt_ts.c:5306:	if (!data->irq_tsk) {
+./atmel_mxt_ts.c:5316:        data->pdata->irqflags = IRQF_TRIGGER_LOW;
+./atmel_mxt_ts.c:5319:                data->pdata->irqflags /*IRQF_TRIGGER_LOW*/,
+./atmel_mxt_ts.c:5330:	data->pdata->irqflags = IRQF_TRIGGER_LOW;
+./atmel_mxt_ts.c:5332:	error = request_threaded_irq(data->irq, NULL, mxt_interrupt,
+./atmel_mxt_ts.c:5333:					 data->pdata->irqflags | IRQF_ONESHOT,
+./atmel_mxt_ts.c:5356:	sysfs_bin_attr_init(&data->mem_access_attr);
+./atmel_mxt_ts.c:5357:	data->mem_access_attr.attr.name = "mem_access";
+./atmel_mxt_ts.c:5358:	data->mem_access_attr.attr.mode = S_IRWXUGO /*S_IRUGO | S_IWUSR*/;
+./atmel_mxt_ts.c:5359:	data->mem_access_attr.read = mxt_mem_access_read;
+./atmel_mxt_ts.c:5360:	data->mem_access_attr.write = mxt_mem_access_write;
+./atmel_mxt_ts.c:5361:	data->mem_access_attr.size = data->mem_size;
+./atmel_mxt_ts.c:5364:				  &data->mem_access_attr) < 0) {
+./atmel_mxt_ts.c:5366:			data->mem_access_attr.attr.name);
+./atmel_mxt_ts.c:5373:	data->fb_notif.notifier_call = fb_notifier_callback;
+./atmel_mxt_ts.c:5374:	error = fb_register_client(&data->fb_notif);
+./atmel_mxt_ts.c:5384:	data->early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN + 1;
+./atmel_mxt_ts.c:5385:	data->early_suspend.suspend = mxt_early_suspend;
+./atmel_mxt_ts.c:5386:	data->early_suspend.resume = mxt_late_resume;
+./atmel_mxt_ts.c:5387:	register_early_suspend(&data->early_suspend);
+./atmel_mxt_ts.c:5398:				  &data->mem_access_attr);
+./atmel_mxt_ts.c:5406:	if (data->properties_kobj) {
+./atmel_mxt_ts.c:5407:		kobject_put(data->properties_kobj);
+./atmel_mxt_ts.c:5408:		data->properties_kobj = NULL;
+./atmel_mxt_ts.c:5411:	board_free_irq(data->pdata,data->irq, data);
+./atmel_mxt_ts.c:5416:	kthread_stop(data->irq_tsk);
+./atmel_mxt_ts.c:5419:	mutex_destroy(&data->access_mutex);
+./atmel_mxt_ts.c:5420:	mutex_destroy(&data->debug_msg_lock);
+./atmel_mxt_ts.c:5421:	if (!dev_get_platdata(&data->client->dev))
+./atmel_mxt_ts.c:5422:		devm_kfree(&data->client->dev,data->pdata);
+./atmel_mxt_ts.c:5425:	dma_free_coherent(NULL, PAGE_SIZE * 2, data->i2c_dma_va, data->i2c_dma_pa);
+./atmel_mxt_ts.c:5436:	fb_unregister_client(&data->fb_notif);
+./atmel_mxt_ts.c:5438:	unregister_early_suspend(&data->early_suspend);
+./atmel_mxt_ts.c:5441:	kthread_stop(data->irq_tsk);
+./atmel_mxt_ts.c:5444:	if (data->mem_access_attr.attr.name)
+./atmel_mxt_ts.c:5446:					  &data->mem_access_attr);
+./atmel_mxt_ts.c:5450:	dma_free_coherent(NULL, PAGE_SIZE * 2, data->i2c_dma_va, data->i2c_dma_pa);
+./atmel_mxt_ts.c:5453:	if (data->properties_kobj) {
+./atmel_mxt_ts.c:5454:		kobject_del(data->properties_kobj);
+./atmel_mxt_ts.c:5455:		data->properties_kobj = NULL;
+./atmel_mxt_ts.c:5458:	board_free_irq(data->pdata,data->irq, data);
+./atmel_mxt_ts.c:5462:	board_gpio_deinit(data->pdata);
+./atmel_mxt_ts.c:5463:	regulator_put(data->reg_avdd);
+./atmel_mxt_ts.c:5464:	regulator_put(data->reg_vdd);
+./atmel_mxt_ts.c:5466:	mutex_destroy(&data->access_mutex);
+./atmel_mxt_ts.c:5467:	mutex_destroy(&data->debug_msg_lock);
+./atmel_mxt_ts.c:5468:	if (!dev_get_platdata(&data->client->dev))
+./atmel_mxt_ts.c:5469:		devm_kfree(&data->client->dev,data->pdata);
+./atmel_mxt_ts.c:5480:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:5501:	struct input_dev *input_dev = data->input_dev;
+./atmel_mxt_ts.c:5528:	if (evdata && evdata->data && event == FB_EVENT_BLANK &&
+./atmel_mxt_ts.c:5530:			blank = evdata->data;
+./atmel_mxt_ts.c:5569:	if(atomic_read(&data->depth)) {
+./atmel_mxt_ts.c:5570:		board_disable_irq(data->pdata,data->irq);
+./atmel_mxt_ts.c:5571:		atomic_dec(&data->depth);
+./plug.if:249:		dev_err(&data->client->dev, "Tried to write outside object T%d"
+./plug.if:255:	return mxt_write_reg(data->client, reg + offset, val);
+./plug.if:269:	if (data->debug_enabled)
+./plug.if:270:		dev_info(&data->client->dev, "read from object %d, reg 0x%02x, val 0x%x\n",
+./plug.if:272:	return __mxt_read_reg(data->client, reg + offset, 1, val);
+./plug.if:288:	reg = data->T37_address;
+./plug.if:289:	ret = __mxt_read_reg(data->client, reg, sizeof(command_register), &command_register[0]);
+./plug.if:291:		dev_err(&data->client->dev, "T37 read offset 0 failed %d!\n",ret);
+./plug.if:297:			dev_err(&data->client->dev, "T6 Command DIAGNOSTIC cmd 0x%x failed %d!\n",cmd,ret);
+./plug.if:306:				dev_err(&data->client->dev, "T6 Command DIAGNOSTIC cmd 0x%x failed %d!\n",cmd,ret);
+./plug.if:316:		reg = data->T37_address;
+./plug.if:317:		ret = __mxt_read_reg(data->client, reg, sizeof(command_register), &command_register[0]);
+./plug.if:319:			dev_err(&data->client->dev, "T37 read offset 0 failed %d!\n",ret);
+./plug.if:333:		dev_err(&data->client->dev,
+./plug.if:355:			dev_err(&data->client->dev,
+./plug.if:366:			reg = data->T37_address;
+./plug.if:367:			ret = __mxt_read_reg(data->client, reg,
+./plug.if:370:				dev_err(&data->client->dev, "T37 read offset 0 failed %d!\n",ret);
+./plug.if:384:				dev_err(&data->client->dev,
+./plug.if:391:			dev_err(&data->client->dev,
+./plug.if:399:		dev_dbg(&data->client->dev, "T37 page command ticks %lu\n",jiffies - time_start);
+./plug.if:403:		ret = __mxt_read_reg(data->client, data->T37_address + (index + 1) * sizeof(s16),//add offset 1
+./plug.if:406:			dev_err(&data->client->dev,
+./plug.if:412:		ret = __mxt_read_reg(data->client, reg, sizeof(command_register), &command_register[0]);
+./plug.if:414:			dev_err(&data->client->dev, "T37 read offset 0 failed %d!\n",ret);
+./plug.if:419:			dev_err(&data->client->dev, "T37 page changed (%d,%d) -> (%d,%d)\n",
+./plug.if:442:		dev_err(&data->client->dev,
+./plug.if:450:		reg = data->T37_address;
+./plug.if:451:		ret = __mxt_read_reg(data->client, reg, sizeof(command_register), &command_register[0]);
+./plug.if:453:			dev_err(&data->client->dev, "T37 reset offset 0 failed %d!\n",ret);
+./plug.if:467:		dev_err(&data->client->dev, "T37 reset page cmd %d timeout(%d %d) ##1\n",
+./plug.if:482:	reg = data->T37_address;
+./plug.if:483:	ret = __mxt_read_reg(data->client, reg, sizeof(command_register), &command_register[0]);
+./plug.if:485:		dev_err(&data->client->dev, "T37 read offset 0 failed!\n");
+./plug.if:495:	struct plug_interface *pl = &data->plug;
+./plug.if:497:	struct device *dev = &data->client->dev;
+./plug.if:543:			ret = __mxt_read_reg(data->client, data->T37_address + (idx + 1) * sizeof(s16),  //add offset 1
+./plug.if:546:				dev_err(&data->client->dev, "Failed to read T37 val at page %d.%d (%d)\n", page, idx, ret);
+./plug.if:596:	struct device *dev = &data->client->dev;
+./plug.if:599:	error = __mxt_read_reg(data->client, data->T8_address + MXT_T8_ATCHCALST,
+./plug.if:605:	error = __mxt_read_reg(data->client, data->T8_address + MXT_T8_ATCHCALSTHR,
+./plug.if:611:	error = __mxt_read_reg(data->client, data->T8_address + MXT_T8_ATCHFRCCALTHR,
+./plug.if:617:	error = __mxt_read_reg(data->client, data->T8_address + MXT_T8_ATCHFRCCALRATIO,
+./plug.if:623:	error = __mxt_read_reg(data->client, data->T8_address + MXT_T8_TCHAUTOCAL,
+./plug.if:634:	struct device *dev = &data->client->dev;
+./plug.if:637:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_XORIGN,
+./plug.if:643:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_YORIGN,
+./plug.if:649:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_XSIZE,
+./plug.if:655:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_YSIZE,
+./plug.if:661:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_TCHHR,
+./plug.if:667:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_TCHHYST,
+./plug.if:673:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_NUMTOUCH,
+./plug.if:679:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_MRGTHR,
+./plug.if:685:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_MRGHYST,
+./plug.if:691:	error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_DUALX_THLD,
+./plug.if:706:	struct device *dev = &data->client->dev;
+./plug.if:710:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_XORIGN,
+./plug.if:716:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_YORIGN,
+./plug.if:722:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_XSIZE,
+./plug.if:728:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_YSIZE,
+./plug.if:734:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_TCHHR,
+./plug.if:740:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_TCHHYST,
+./plug.if:746:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_INTTHR,
+./plug.if:752:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_INTTHRHYST,
+./plug.if:758:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_NUMTOUCH,
+./plug.if:764:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_MRGTHR,
+./plug.if:770:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_MRGHYST,
+./plug.if:776:	error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_DXTHRSF,
+./plug.if:796:	struct device *dev = &data->client->dev;
+./plug.if:800:	error = __mxt_read_reg(data->client, data->T15_address,
+./plug.if:808:		error = __mxt_read_reg(data->client, data->T15_address + MXT_T15_XORIGN,
+./plug.if:814:		error = __mxt_read_reg(data->client, data->T15_address + MXT_T15_YORIGN,
+./plug.if:820:		error = __mxt_read_reg(data->client, data->T15_address + MXT_T15_XSIZE,
+./plug.if:826:		error = __mxt_read_reg(data->client, data->T15_address + MXT_T15_YSIZE,
+./plug.if:832:		error = __mxt_read_reg(data->client, data->T15_address + MXT_T15_TCHHR,
+./plug.if:847:	struct device *dev = &data->client->dev;
+./plug.if:850:	error = __mxt_read_reg(data->client, data->T38_address,
+./plug.if:862:	struct device *dev = &data->client->dev;
+./plug.if:865:	error = __mxt_read_reg(data->client, data->T40_address,
+./plug.if:877:	struct device *dev = &data->client->dev;
+./plug.if:880:	error = __mxt_read_reg(data->client, data->T42_address,
+./plug.if:892:	struct device *dev = &data->client->dev;
+./plug.if:895:	error = __mxt_read_reg(data->client, data->T55_address,
+./plug.if:907:	struct device *dev = &data->client->dev;
+./plug.if:910:	error = __mxt_read_reg(data->client, data->T61_address,
+./plug.if:922:	struct device *dev = &data->client->dev;
+./plug.if:925:	error = __mxt_read_reg(data->client, data->T65_address,
+./plug.if:937:	struct device *dev = &data->client->dev;
+./plug.if:940:	error = __mxt_read_reg(data->client, data->T80_address,
+./plug.if:952:	struct device *dev = &data->client->dev;
+./plug.if:955:	error = __mxt_read_reg(data->client, data->T92_address,
+./plug.if:968:	struct device *dev = &data->client->dev;
+./plug.if:974:	error = __mxt_write_reg(data->client, data->T7_address,
+./plug.if:1000:	struct device *dev = &data->client->dev;
+./plug.if:1026:	struct device *dev = &data->client->dev;
+./plug.if:1041:	struct device *dev = &data->client->dev;
+./plug.if:1063:		reg = data->T9_address + MXT_T9_NUMTOUCH;
+./plug.if:1064:		if (__mxt_read_reg(data->client, reg, 1, &val) == 0) {
+./plug.if:1065:			__mxt_write_reg(data->client,reg,1,&cfg->num_touch);
+./plug.if:1068:				input_dev = data->input_dev;
+./plug.if:1084:	struct device *dev = &data->client->dev;
+./plug.if:1106:		reg = data->T100_address + MXT_T100_NUMTOUCH;
+./plug.if:1107:		if (__mxt_read_reg(data->client, reg, 1, &val) == 0) {
+./plug.if:1108:			__mxt_write_reg(data->client,reg,1,&cfg->num_touch);
+./plug.if:1110:				input_dev = data->input_dev;
+./plug.if:1128:	struct device *dev = &data->client->dev;
+./plug.if:1137:		if (data->T9_reportid_min)
+./plug.if:1139:		else if (data->T100_reportid_min)
+./plug.if:1153:	struct device *dev = &data->client->dev;
+./plug.if:1166:	struct device *dev = &data->client->dev;
+./plug.if:1187:	struct device *dev = &data->client->dev;
+./plug.if:1209:	struct device *dev = &data->client->dev;
+./plug.if:1212:	if (!data->T42_address)
+./plug.if:1218:	reg = data->T42_address;
+./plug.if:1220:		__mxt_write_reg(data->client, reg ,sizeof(struct t42_config), cfg);
+./plug.if:1232:	struct device *dev = &data->client->dev;
+./plug.if:1236:	if (!data->T42_address)
+./plug.if:1254:	struct device *dev = &data->client->dev;
+./plug.if:1257:	if (!data->T55_address)
+./plug.if:1263:	reg = data->T55_address;
+./plug.if:1264:	__mxt_write_reg(data->client, reg ,sizeof(struct t55_config), cfg);
+./plug.if:1273:	struct device *dev = &data->client->dev;
+./plug.if:1277:	if (!data->T55_address)
+./plug.if:1294:	struct device *dev = &data->client->dev;
+./plug.if:1303:	reg = data->T61_address + id * sizeof(*cfg);
+./plug.if:1304:	__mxt_write_reg(data->client, reg ,sizeof(struct t61_config), cfg);
+./plug.if:1313:	struct device *dev = &data->client->dev;
+./plug.if:1317:	if (!data->T61_address)
+./plug.if:1336:	struct device *dev = &data->client->dev;
+./plug.if:1339:	if (!data->T65_address)
+./plug.if:1348:	reg = data->T65_address;
+./plug.if:1350:		__mxt_write_reg(data->client, reg ,sizeof(struct t65_config), cfg);
+./plug.if:1367:	struct device *dev = &data->client->dev;
+./plug.if:1371:	if (!data->T65_address)
+./plug.if:1389:	struct device *dev = &data->client->dev;
+./plug.if:1393:	if (!data->T80_address)
+./plug.if:1404:	reg = data->T80_address;
+./plug.if:1406:		__mxt_write_reg(data->client, reg ,sizeof(struct t80_config), cfg);
+./plug.if:1413:			__mxt_write_reg(data->client, reg + offset,sizeof(struct t80_config)- offset, &cfg->comp_gain);
+./plug.if:1422:	struct device *dev = &data->client->dev;
+./plug.if:1426:	if (!data->T80_address)
+./plug.if:1446:	struct device *dev = &data->client->dev;
+./plug.if:1462:			dev_dbg2(&data->client->dev, "Skip request: reg %d off %d len %d flag(0x%lx,0x%lx,0x%lx)\n",
+./plug.if:1470:		dev_dbg2(&data->client->dev, "Skip zero request: reg %d off %d len %d\n",
+./plug.if:1480:		dev_err(&data->client->dev, "Object not found: reg %d off %d len %d\n",
+./plug.if:1485:		dev_err(&data->client->dev, "Tried to write outside object T%d"
+./plug.if:1492:		dev_err(&data->client->dev, "Object address not found: reg %d off %d len %d\n",
+./plug.if:1498:		dev_err(&data->client->dev, "Config data too long: reg %d off %d len %d\n",
+./plug.if:1506:		ret = __mxt_read_reg(data->client, reg, config->len, old_buf);
+./plug.if:1508:			dev_err(&data->client->dev, "Config read reg failed: reg %d off %d len %d\n",
+./plug.if:1527:	ret = __mxt_write_reg(data->client, reg, config->len, config->buf);
+./plug.if:1544:	struct device *dev = &data->client->dev;
+./plug.if:1569:	struct device *dev = &data->client->dev;
+./plug.if:1573:	ret = __mxt_read_reg(data->client, data->T71_address + MXT_T71_RESET_TAG,
+./plug.if:1583:			__mxt_write_reg(data->client, data->T71_address + MXT_T71_RESET_TAG,
+./plug.if:1602:	struct device *dev = &data->client->dev;
+./plug.if:1607:	if (data->T9_address) {
+./plug.if:1608:		error = __mxt_read_reg(data->client, data->T9_address + MXT_T9_CTRL,
+./plug.if:1610:	} else if (data->T100_address) {
+./plug.if:1611:		error = __mxt_read_reg(data->client, data->T100_address + MXT_T100_CTRL,
+./plug.if:1632:	struct device *dev = &data->client->dev;
+./plug.if:1633:	struct plug_interface *pl = &data->plug;
+./plug.if:1652:	if (data->T9_reportid_min) {
+./plug.if:1661:	if (data->T100_reportid_min) {
+./plug.if:1670:	if (data->T15_reportid_min) {
+./plug.if:1685:	if (data->T40_address) {
+./plug.if:1693:	if (data->T42_address) {
+./plug.if:1701:	if (data->T55_address) {
+./plug.if:1709:	if (data->T61_address) {
+./plug.if:1710:		error = mxt_get_init_config_t61(data,&dcfg->t61[0],min_t(int , data->T61_instances, T61_MAX_INSTANCE_NUM));
+./plug.if:1717:	if (data->T65_address) {
+./plug.if:1725:	if (data->T80_address) {
+./plug.if:1734:	if (data->T92_address) {
+./plug.if:1742:	config_matrix_init(dcfg,data->info->matrix_xsize,data->info->matrix_ysize);
+./plug.if:1743:	dcfg->dev = &data->client->dev;
+./plug.if:1744:	dcfg->max_x = data->max_x;
+./plug.if:1745:	dcfg->max_y = data->max_y;
+./plug.if:2100:	dev = &data->client->dev;
+./plug.if:2143:	dev = &data->client->dev;
+./plug.if:2149:	if (data->T38_address < cfg_start_ofs) {
+./plug.if:2151:			data->T7_address, cfg_start_ofs);
+./plug.if:2156:		memcpy(config_mem + data->T38_address - cfg_start_ofs, pl->init_cfg.t38.data, len);
+./plug.if:2297:	dev = &data->client->dev;
+./plug.if:2441:	dev = &data->client->dev;
+./plug.if:2647:	struct plug_interface *pl = &data->plug;
+./plug.if:2648:	struct device *dev = &data->client->dev;
+./plug.if:2654:	if (!data->object_table)
+./plug.if:2679:	struct plug_interface *pl = &data->plug;
+./plug.if:2680:	struct device *dev = &data->client->dev;
+./plug.if:2686:	if (!data->object_table)
+./plug.if:2825:	struct plug_interface *pl = &data->plug;
+./plug.if:2872:				data->T9_reportid_min ? 9 : (data->T100_reportid_min ? 100 : 255),
+./plug.if:2944:	struct plug_interface *pl = &data->plug;
+./plug.if:3174:	struct plug_interface *pl = &data->plug;
+./plug.if:3233:	struct plug_interface *pl = &data->plug;
+./plug.if:3245:	struct plug_interface *pl = &data->plug;
+./plug.if:3263:	struct plug_interface *pl = &data->plug;
+./plug.if:3275:	struct plug_interface *pl = &data->plug;
+./plug.if:3292:	struct plug_interface *pl = &data->plug;
+./plug.if:3304:	struct plug_interface *pl = &data->plug;
+./plug.if:3310:	if (data->suspended)
+./plug.if:3323:	struct plug_interface *pl = &data->plug;
+./plug.if:3335:	struct plug_interface *pl = &data->plug;
+./plug.if:3341:	if (data->suspended)

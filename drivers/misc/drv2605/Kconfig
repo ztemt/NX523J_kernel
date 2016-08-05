@@ -1,0 +1,3 @@
+config DRV2605
+	bool
+	default y

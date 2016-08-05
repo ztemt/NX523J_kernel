@@ -1,0 +1,112 @@
+/*
+ * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+
+&mdss_mdp {
+	qcom,mdss-pref-prim-intf = "dsi";
+};
+/*
+&dsi_dual_nt35597_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-dsi-pan-enable-dynamic-fps;
+	qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_hfp";
+};
+
+&dsi_dual_nt35597_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,partial-update-enabled;
+	qcom,panel-roi-alignment = <720 128 720 128 720 128>;
+};
+
+&dsi_nt35597_dsc_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-dsi-mode-sel-gpio-state = "dsc_mode";
+	qcom,mdss-dsi-pan-enable-dynamic-fps;
+	qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_hfp";
+};
+
+&dsi_nt35597_dsc_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-dsi-mode-sel-gpio-state = "dsc_mode";
+};
+*/
+&dsi_sumsang_s6e3fa3x01_1080_5p2_cmd {
+	qcom,mdss-dsi-bl-pmic-pwm-frequency = <100>;
+	qcom,mdss-dsi-bl-pmic-bank-select = <0>;
+	qcom,mdss-dsi-pwm-gpio = <&pm8950_mpps 4 0>;
+	qcom,cont-splash-enabled;
+    //qcom,avdd-enabled;
+    //qcom,avdd-vsp-voltage = <5500>;
+    //qcom,avdd-vsn-voltage = <5500>;
+    //qcom,avdd-vsp-vsn-delay = <15>;
+    qcom,befor-panel-on-cmd-delay = <10>;
+
+    //LP11
+    qcom,mdss-dsi-lp11-init;
+    qcom,mdss-dsi-init-delay-us = <30000>;
+
+	//Dimming control
+	qcom,dimming-enable;
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,disable-dimming-when-suspend;
+	qcom,disable-dimming-when-resume;
+	qcom,dimming-control-reg 	 = <0x53>;
+	qcom,dimming-enable-command  = <0x28>;
+	qcom,dimming-disable-command = <0x20>;
+};
+
+&pmx_mdss {
+	qcom,num-grp-pins = <2>;
+	qcom,pins = <&gp 24>, <&gp 25>;
+};
+
+&pmx_mdss_te {
+	qcom,num-grp-pins = <1>;
+	qcom,pins = <&gp 24>;
+};
+
+&mdss_dsi0 {
+	qcom,dsi-pref-prim-pan = <&dsi_sumsang_s6e3fa3x01_1080_5p2_cmd>;
+	pinctrl-names = "mdss_default", "mdss_sleep";
+	pinctrl-0 = <&mdss_te_active &mdss_reset_active &mdss_3p3_enable_active>;//&mdss_vio_enable_active
+	pinctrl-1 = <&mdss_te_suspend &mdss_reset_suspend &mdss_3p3_enable_suspend>;//&mdss_vio_enable_suspend
+
+	qcom,platform-te-gpio = <&msm_gpio 24 0>;
+	qcom,platform-reset-gpio = <&msm_gpio 25 0>;
+	qcom,platform-enable-gpio = <&msm_gpio 69 0>;
+};
+
+&mdss_dsi1 {
+  status = "no";
+};
+
+&labibb {
+	status = "ok";
+	qpnp,qpnp-labibb-mode = "lcd";
+};
+
+&ibb_regulator {
+	qcom,qpnp-ibb-discharge-resistor = <32>;
+};

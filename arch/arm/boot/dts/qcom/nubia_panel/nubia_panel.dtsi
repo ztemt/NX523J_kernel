@@ -1,0 +1,8 @@
+#include "zte-dsi-samsung-panel-s6e3fa3x01-1080p-5p2-command.dtsi"
+#include "zte-dsi-panel-sharp-1080p-6p4-video.dtsi"
+#include "nubia-tianma-otm1901a-1080p-5p5-video.dtsi"
+#include "nubia-tianma-nt35695-1080p-5p5-video.dtsi"
+#include "nubia-tianma-nt35695-1080p-5p5-cmd.dtsi"
+#include "nubia-lead-hx8399a-1080p-5p5-video.dtsi"
+#include "nubia-jdi-r63452-1080p-5p5-video.dtsi"
+#include "nubia-jdi-r63452-1080p-5p5-cmd.dtsi"

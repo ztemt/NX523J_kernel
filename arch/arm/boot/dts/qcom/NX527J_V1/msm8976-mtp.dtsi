@@ -1,0 +1,627 @@
+/*
+ * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+#include "msm8976-pinctrl.dtsi"
+#include "msm8976-camera-sensor-mtp.dtsi"
+#include "msm8976-mdss-mtp.dtsi"
+#include "msm8976-mtp-usb-typec.dtsi"
+
+&i2c_4 { /* BLSP1 QUP4 */
+//nubia for touchscreen
+/*
+	synaptics@20 {
+		compatible = "synaptics,dsx";
+		reg = <0x20>;
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <65 0x2008>;
+		avdd-supply = <&pm8950_l10>;
+		vdd-supply = <&pm8950_l6>;
+		clock-names = "iface_clk", "core_clk";
+		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
+			<&clock_gcc clk_gcc_blsp1_qup4_i2c_apps_clk>;
+		pinctrl-names = "pmx_ts_active","pmx_ts_suspend","pmx_ts_release";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+		pinctrl-2 = <&ts_release>;
+		synaptics,irq-gpio = <&msm_gpio 65 0x2008>;
+		synaptics,reset-gpio = <&msm_gpio 64 0x0>;
+		synaptics,i2c-pull-up;
+		synaptics,power-down;
+		synaptics,disable-gpios;
+		synaptics,detect-device;
+		synaptics,bypass-packrat-id-check;
+		synaptics,device1 {
+			synaptics,package-id = <3528>;
+			synaptics,bypass-sensor-coords-check;
+			synaptics,display-coords = <0 0 1439 2559>;
+			synaptics,panel-coords = <0 0 1439 2559>;
+		};
+	};
+*/
+
+	synaptics_dsx@20 {
+		compatible = "synaptics,dsx-i2c";
+		reg = <0x20>;
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <65 0x2008>;
+		vdd_ana-supply = <&pm8950_l10>;
+		vcc_i2c-supply = <&pm8950_l5>;
+		synaptics,pwr-reg-name = "vdd_ana";
+		synaptics,bus-reg-name = "vcc_i2c";
+		synaptics,irq-gpio = <&msm_gpio 65 0x2008>;
+		synaptics,irq-on-state = <0>;
+		synaptics,irq-flags = <0x2008>; /* IRQF_ONESHOT | IRQF_TRIGGER_LOW */
+		synaptics,power-delay-ms = <200>;
+		synaptics,power-gpio = <&msm_gpio 27 0x0>;
+		synaptics,power-on-state = <1>;
+		synaptics,reset-gpio = <&msm_gpio 64 0x0>;
+		synaptics,reset-on-state = <0>;
+		synaptics,reset-active-ms = <20>;
+		synaptics,reset-delay-ms = <20>;
+		synaptics,lcd-reset-gpio = <&msm_gpio 25 0x0>;
+		synaptics,cap-button-codes = <172 139 158>;
+		pinctrl-names = "synaptics_pin_active", "synaptics_pin_suspend";
+		pinctrl-0 = <&synaptics_irq_active &synaptics_rst_active>;
+		pinctrl-1 = <&synaptics_irq_suspend &synaptics_rst_suspend>;
+	};
+
+	gt1x@5d {
+		compatible = "goodix,gt1x";
+		reg = <0x5d>;
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <65 0x2008>;
+		vdd_ana-supply = <&pm8950_l10>;
+		vcc_i2c-supply = <&pm8950_l5>;
+		pinctrl-names = "gt1x_pin_active","gt1x_pin_suspend";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+		goodix,reset-gpio = <&msm_gpio 64 0x00>;
+		goodix,irq-gpio = <&msm_gpio 65 0x2008>;
+	};
+
+	cyttsp_i2c_adapter@24 {
+		compatible = "cy,cyttsp5_i2c_adapter";
+		reg = <0x24>;
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <65 0x2>;
+		vdd_ana-supply = <&pm8950_l10>;
+		vcc_i2c-supply = <&pm8950_l5>;
+		pinctrl-names = "cyttsp5_pin_active", "cyttsp5_pin_suspend";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+		cy,adapter_id = "cyttsp5_i2c_adapter";
+		cy,core {
+			cy,name = "cyttsp5_core";
+			cy,irq_gpio = <&msm_gpio 65 0x2008>;
+			cy,rst_gpio = <&msm_gpio 64 0x0>;
+			cy,hid_desc_register = <1>;
+			/* CY_CORE_FLAG_WAKE_ON_GESTURE | CY_CORE_FLAG_RESTORE_PARAMETERS */
+			cy,flags = <0x05>;
+			/* CY_CORE_EWG_NONE */
+			cy,easy_wakeup_gesture = <0>;
+			cy,btn_keys = <139	/* KEY_MENU */
+			          172 /* KEY_HOMEPAGE */
+				       158>;	/* KEY_BACK */
+			cy,btn_keys-tag = <0>;
+
+			cy,mt {
+				cy,name = "cyttsp5_mt";
+				cy,inp_dev_name = "cyttsp5_mt";
+				cy,flags = <0x00>;
+				cy,abs =
+					/* ABS_MT_POSITION_X, CY_ABS_MIN_X, CY_ABS_MAX_X, 0, 0 */
+					<0x35 0 1080 0 0
+					/* ABS_MT_POSITION_Y, CY_ABS_MIN_Y, CY_ABS_MAX_Y, 0, 0 */
+					0x36 0 1920 0 0
+					/* ABS_MT_PRESSURE, CY_ABS_MIN_P, CY_ABS_MAX_P, 0, 0 */
+					0x3a 0 255 0 0
+					/* CY_IGNORE_VALUE, CY_ABS_MIN_W, CY_ABS_MAX_W, 0, 0 */
+					0xffff 0 255 0 0
+					/* ABS_MT_TRACKING_ID, CY_ABS_MIN_T, CY_ABS_MAX_T, 0, 0 */
+					0x39 0 15 0 0
+					/* ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0 */
+					0x30 0 255 0 0
+					/* ABS_MT_TOUCH_MINOR, 0, 255, 0, 0 */
+					0x31 0 255 0 0
+					/* ABS_MT_ORIENTATION, -127, 127, 0, 0 */
+					0x34 0xffffff81 127 0 0
+					/* ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0, 0 */
+					/* 0x37 0 1 0 0 */
+					/* ABS_DISTANCE, 0, 255, 0, 0 */
+					0x19 0 255 0 0>;
+
+				cy,vkeys_x = <1080>;
+				cy,vkeys_y = <1920>;
+
+				cy,virtual_keys = /* KeyCode CenterX CenterY Width Height */
+					/* KEY_BACK */
+					<158 1360 90 160 180
+					/* KEY_MENU */
+					139 1360 270 160 180
+					/* KEY_HOMEPAGE */
+					172 1360 450 160 180
+					/* KEY SEARCH */
+					217 1360 630 160 180>;
+			};
+
+			cy,btn {
+				cy,name = "cyttsp5_btn";
+				cy,inp_dev_name = "cyttsp5_btn";
+			};
+		};
+	};
+
+};
+
+&i2c_6 { /* BLSP2 QUP2 */
+	nq@28 {
+		compatible = "nxp,pn544";
+		reg = <0x28>;
+		nfc,irq_gpio = <&msm_gpio 13 0x00>;
+		nfc,ven_gpio = <&msm_gpio 12 0x00>;
+		nfc,nq-clkreq = <&pm8950_gpios 5 0x00>;
+		nfc,firm_gpio = <&msm_gpio 16 0x00>;
+                interrupt-parent = <&msm_gpio>;
+		nfc,clk-src = "BBCLK2";
+		interrupts = <13 0>;
+		interrupt-names = "nfc_irq";
+		pinctrl-names = "nfc_active", "nfc_suspend";
+		pinctrl-0 = <&nfc_int_active &nfc_disable_active>;
+		pinctrl-1 = <&nfc_int_suspend &nfc_disable_suspend>;
+		clocks = <&clock_gcc clk_bb_clk2_pin>;
+		clock-names = "ref_clk";
+	};
+	txc@1e {
+		compatible = "txc,pa224";
+		reg = <0x1e>;
+		pinctrl-names = "pa224_default","pa224_sleep";
+		pinctrl-0 = <&pa224_default>;
+		pinctrl-1 = <&pa224_sleep>;
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <140 0x2>;
+		vdd-supply = <&pm8950_l10>;
+		//vio-supply = <&pm8950_l10>;
+		txc,vdd-always-on = <1>;
+		txc,irq-gpio = <&msm_gpio 140 0x2002>;
+		txc,ps_threshold_low = <30>;
+		txc,ps_threshold_high = <120>;
+	};
+	rohm@38 {
+		compatible = "rohm,bh1745";
+		reg = <0x38>;
+		vdd-supply = <&pm8950_l10>;
+		//vio-supply = <&pm8950_l10>;
+		bh1745,tp_moudle_count = <3>;
+		/*[module_id] [golden judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		bh1745,cal_data0 = "0","198","495","1179","127","215","0","0",
+		/*[white judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		"203","82","140","283","574","0","0",
+		/*[balck judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		"248","111","22","511","1040","0","0";
+		/*[module_id] [golden judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		bh1745,cal_data1 = "1","242","1565","932","9035","8607","0","0",
+		/*[white judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		"189","146","88","598","533","0","0",
+		/*[balck judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		"1040","1911","310","11509","9976","0","0";
+		/*[module_id] [golden judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		bh1745,cal_data2 = "2","199","488","274","2283","2068","0","0",
+		/*[white judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		"194","216","113","886","821","0","0",
+		/*[balck judge] r[0] r[1] g[0] g[1] b[0] b[1]*/
+		"396","2301","547","13243","12687","0","0";
+	};
+	ti@5a{
+		compatible = "ti,drv2605";
+		reg = <0x5a>;
+		pinctrl-names = "active","suspend";
+              pinctrl-0 = <&drv2605_power_active>;
+              pinctrl-1 = <&drv2605_power_suspend>;
+		ti,enable-gpio=<&msm_gpio 135 0x0>;
+	};	
+};
+
+&i2c_2 {
+	/* Parallel-charger configuration */
+	smb1351-charger@1d {
+		compatible = "qcom,smb1351-charger";
+		reg = <0x1d>;
+		qcom,parallel-en-pin-polarity = <1>;
+		qcom,parallel-charger;
+		qcom,float-voltage-mv = <4400>;
+		qcom,recharge-mv = <100>;
+	};
+};
+
+
+&i2c_8{ /* BLSP8 BLSP2QUP4 */
+		status = "ok";
+		tfa98xx@34 {
+			compatible = "nxp,tfa98xx";
+			 reg =<0x34>;
+			nxp,rst-ctrl-gpio = <&msm_gpio 49 0x00>;
+			tfa9890-intr-gpio = <&msm_gpio 67 0x00>;
+		};
+        ak4376@10{
+			compatible = "ak4376";
+			reg = <0x10>;
+			en-gpio = <&msm_gpio 69 0x00>;
+            ldo-en-gpio = <&msm_gpio 50 0x00>;
+		};
+		pressure_dev@50 {
+			status = "okay";
+			reg = <0x50>;
+			compatible = "nubia,pressure_sensor_ndt";
+			pressure,fw-name = "pressure-dev-ndt.bin";
+			pressure,support_smart_key = <0>;
+			interrupt-parent = <&msm_gpio>;
+			pressure_key,type = <1>;
+			pressure_key,code = <256>;
+			pressure_key,wakeup_code = <257>;
+			pressure,reset-pin = <&msm_gpio 66 0x00>;
+			pressure,vlps-pin = <&msm_gpio 115 0x00>;
+			pressure,irq-pin = <&msm_gpio 115 0x2003>;
+			pinctrl-names = "pressure_ndt_default","pressure_ndt_sleep";
+			pinctrl-0 = <&pressure_ndt_default>;
+			pinctrl-1 = <&pressure_ndt_sleep>;
+		};
+
+};
+
+&spi_6{
+	status = "ok";
+
+	/*
+	gf318m@0{
+		status = "ok";
+		compatible = "gf318m";
+		reg = <0>;
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <33 0>;
+		gf-gpio-rst  = <&msm_gpio 51 0x00>;
+		gf-gpio-drdy = <&msm_gpio 33 0x00>;
+		gf-gpio-enable = <&msm_gpio 112 0x00>;
+
+		pinctrl-names = "gf_active", "gf_suspend", "gf_enable_active",
+						"gf_int_active", "gf_rst_active";
+		pinctrl-0 = <&gf_enable_active &gf_int_active &gf_rst_active>;
+		pinctrl-1 = <&gf_enable_suspend &gf_int_suspend &gf_rst_suspend>;
+		pinctrl-2 = <&gf_enable_active>;
+		pinctrl-3 = <&gf_int_active>;
+		pinctrl-4 = <&gf_rst_active>;
+
+		spi-max-frequency = <4800000>;
+		qcom,qup-id = <2>;
+		clock-names = "iface_clk", "core_clk";
+		clocks = <&clock_gcc clk_gcc_blsp2_ahb_clk>,
+			<&clock_gcc clk_gcc_blsp2_qup3_spi_apps_clk>;
+
+		gf,tz-enable;
+	};
+	*/
+
+	//#define FPC1020_SPI_DEVICE
+	#ifdef FPC1020_SPI_DEVICE
+	fpc1020@0 {
+		status = "ok";
+		reg = <1>;
+		compatible = "fpc,fpc1020";
+		input-device-name = "fpc1020";
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <33 0x0>;
+		fpc,gpio_rst    = <&msm_gpio 51 0>;
+		fpc,gpio_irq    = <&msm_gpio 33 0>;
+		fpc,use_fpc2050 = <1>;
+		fpc,enable-on-boot;
+		/delete-property/ fpc,enable-wakeup;
+		/* EV_MSC, MSC_SCAN */
+		fpc,event-type = <4>;
+		fpc,event-code = <4>;
+
+		spi-max-frequency = <4800000>;
+		spi-qup-id = <1>;                       //<1> or <2>???
+		clock-names = "iface_clk", "core_clk";
+		clocks = <&clock_gcc clk_gcc_blsp2_ahb_clk>,
+			<&clock_gcc clk_gcc_blsp2_qup3_spi_apps_clk>;
+
+		pinctrl-names = "fpc1020_reset_reset",
+			"fpc1020_reset_active",
+			"fpc1020_irq_active",
+			"fpc1020_ldo_enable",
+			"fpc1020_ldo_disable";
+
+		pinctrl-0 = <&fpc_reset_reset>;
+		pinctrl-1 = <&fpc_reset_active>;
+		pinctrl-2 = <&fpc_irq_active>;
+		pinctrl-3 = <&fpc_ldo_enable>;
+		pinctrl-4 = <&fpc_ldo_disable>;
+	};
+	#endif	//#ifdef FPC1020_SPI_DEVICE
+};
+
+// enable uart1 for IR-Remote
+&blsp2_uart2 {
+		status = "ok";
+};
+// nubia add end
+
+&soc {
+
+	/* used for fingerprint device as platform device added by nubia */
+	gf318m {
+		status = "ok";
+		compatible = "goodix,gf318m";
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <33 0>;
+		gf-gpio-rst  = <&msm_gpio 51 0x00>;
+		gf-gpio-drdy = <&msm_gpio 33 0x00>;
+		gf-gpio-enable = <&msm_gpio 112 0x00>;
+
+		pinctrl-names = "gf_active", "gf_suspend", "gf_enable_active",
+						"gf_int_active", "gf_rst_active";
+		pinctrl-0 = <&gf_enable_active &gf_int_active &gf_rst_active>;
+		pinctrl-1 = <&gf_enable_suspend &gf_int_suspend &gf_rst_suspend>;
+		pinctrl-2 = <&gf_enable_active>;
+		pinctrl-3 = <&gf_int_active>;
+		pinctrl-4 = <&gf_rst_active>;
+	};
+
+	#define FPC1020_PLATFORM_DEVICE
+	#ifdef FPC1020_PLATFORM_DEVICE
+	fpc1020 {
+		status = "ok";
+		compatible = "fpc,fpc1020";
+		input-device-name = "fpc1020";
+		interrupt-parent = <&msm_gpio>;
+		interrupts = <33 0x0>;
+		fpc,gpio_rst    = <&msm_gpio 51 0>;
+		fpc,gpio_irq    = <&msm_gpio 33 0>;
+		fpc,use_fpc2050 = <1>;
+		fpc,enable-on-boot;
+		/delete-property/ fpc,enable-wakeup;
+		/* EV_MSC, MSC_SCAN */
+		fpc,event-type = <4>;
+		fpc,event-code = <4>;
+
+		pinctrl-names = "fpc1020_reset_reset",
+			"fpc1020_reset_active",
+			"fpc1020_irq_active",
+			"fpc1020_ldo_enable",
+			"fpc1020_ldo_disable";
+
+		pinctrl-0 = <&fpc_reset_reset>;
+		pinctrl-1 = <&fpc_reset_active>;
+		pinctrl-2 = <&fpc_irq_active>;
+		pinctrl-3 = <&fpc_ldo_enable>;
+		pinctrl-4 = <&fpc_ldo_disable>;
+	};
+	#endif	//#ifdef FPC1020_PLATFORM_DEVICE
+
+	gpio_keys {
+		compatible = "gpio-keys";
+		input-name = "gpio-keys";
+		pinctrl-names = "tlmm_gpio_key_active","tlmm_gpio_key_suspend";
+		pinctrl-0 = <&gpio_key_active>;
+		pinctrl-1 = <&gpio_key_suspend>;
+
+/*  NO extral camera keys
+		camera_focus {
+			label = "camera_focus";
+			gpios = <&msm_gpio 115 0x1>;
+			linux,input-type = <1>;
+			linux,code = <0x210>;
+			debounce-interval = <15>;
+		};
+
+		camera_snapshot {
+			label = "camera_snapshot";
+			gpios = <&msm_gpio 114 0x1>;
+			linux,input-type = <1>;
+			linux,code = <0x2fe>;
+			debounce-interval = <15>;
+		};
+*/
+
+		vol_up {
+			label = "volume_up";
+			gpios = <&msm_gpio 113 0x1>;
+			linux,input-type = <1>;
+			linux,code = <115>;
+			debounce-interval = <15>;
+		};
+	};
+
+	sound-9335 {
+		qcom,msm-gpios =
+			"quat_i2s",
+			"quin_i2s";
+		qcom,pinctrl-names =
+			"all_off",
+			"quat_i2s_act quin_i2s_sus",
+			"quat_i2s_sus quin_i2s_act",
+			"quat_i2s_act quin_i2s_act";
+		pinctrl-names =
+			"all_off",
+			"quat_i2s_act quin_i2s_sus",
+			"quat_i2s_sus quin_i2s_act",
+			"quat_i2s_act quin_i2s_act";
+		pinctrl-0 = <&sec_tlmm_lines_sus &sec_tlmm_2_lines_sus &ak4376_mclk_off &pri_tlmm_lines_sus>;
+		pinctrl-1 = <&sec_tlmm_lines_act &sec_tlmm_2_lines_act &ak4376_mclk_on &pri_tlmm_lines_sus>;
+		pinctrl-2 = <&sec_tlmm_lines_sus &sec_tlmm_2_lines_sus &ak4376_mclk_off &pri_tlmm_lines_act>;
+		pinctrl-3 = <&sec_tlmm_lines_act &sec_tlmm_2_lines_act &ak4376_mclk_on &pri_tlmm_lines_act>;
+	};
+	hall_device_out {
+		compatible = "nubia,hall_device";
+		status = "okay";
+		pinctrl-names = "hall_default","hall_sleep";
+		pinctrl-0 = <&hall_int_0_default &hall_int_1_default>;
+		pinctrl-1 = <&hall_int_0_sleep &hall_int_1_sleep>;
+		vio-supply = <&pm8950_l5>;
+		interrupt-parent = <&msm_gpio>;
+		hall_device,hw_device_count = <2>;
+		hall_device,irq-gpio-0 = <&msm_gpio 144 0x2002>;
+		hall_device,irq-gpio-1 = <&msm_gpio 142 0x2002>;
+	};
+};
+
+// nubia add start
+// add spi6 for fingerprint
+
+&blsp1_uart2 {
+	status = "ok";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart_console_sleep>;
+};
+
+// nubia add end
+
+&mem_client_3_size {
+	qcom,peripheral-size = <0x500000>;
+};
+
+&spmi_bus {
+	qcom,pmi8950@3 {
+		qcom,leds@d800 {
+			qcom,fs-curr-ua = <20000>;
+		};
+/*
+		qcom,haptic@c000 {
+			compatible = "qcom,qpnp-haptic";
+			reg = <0xc000 0x100>;
+			interrupts = <0x3 0xc0 0x0>,
+				<0x3 0xc0 0x1>;
+			interrupt-names = "sc-irq", "play-irq";
+			qcom,play-mode = "direct";
+			qcom,wave-play-rate-us = <5263>;
+			qcom,actuator-type = "lra";
+			qcom,wave-shape = "square";
+			qcom,vmax-mv = <2000>;
+			qcom,ilim-ma = <800>;
+			qcom,sc-deb-cycles = <8>;
+			qcom,int-pwm-freq-khz = <505>;
+			qcom,en-brake;
+			qcom,brake-pattern = [03 03 00 00];
+			qcom,use-play-irq;
+			qcom,use-sc-irq;
+			qcom,wave-samples = [3e 3e 3e 3e 3e 3e 3e 3e];
+			qcom,wave-rep-cnt = <1>;
+			qcom,wave-samp-rep-cnt = <1>;
+			qcom,lra-auto-res-mode="qwd";
+			qcom,lra-high-z="opt1";
+			qcom,lra-res-cal-period = <0>;
+			qcom,correct-lra-drive-freq;
+			qcom,misc-trim-error-rc19p2-clk-reg-present;
+		};*/
+	};
+};
+
+&sdhc_1 {
+	vdd-supply = <&pm8950_l8>;
+	qcom,vdd-voltage-level = <2900000 2900000>;
+	qcom,vdd-current-level = <200 570000>;
+
+	vdd-io-supply = <&pm8950_l5>;
+	qcom,vdd-io-always-on;
+	qcom,vdd-io-lpm-sup;
+	qcom,vdd-io-voltage-level = <1800000 1800000>;
+	qcom,vdd-io-current-level = <200 325000>;
+
+	pinctrl-names = "active", "sleep";
+	pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on &sdc1_data_on &sdc1_rclk_on>;
+	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off &sdc1_data_off &sdc1_rclk_off>;
+
+	qcom,nonremovable;
+
+	status = "ok";
+};
+
+&sdhc_2 {
+	vdd-supply = <&pm8950_l11>;
+	qcom,vdd-voltage-level = <2950000 2950000>;
+	qcom,vdd-current-level = <15000 800000>;
+
+	vdd-io-supply = <&pm8950_l12>;
+	qcom,vdd-io-voltage-level = <1800000 2950000>;
+	qcom,vdd-io-current-level = <200 22000>;
+
+	pinctrl-names = "active", "sleep";
+	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
+	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
+
+	#address-cells = <0>;
+	interrupt-parent = <&sdhc_2>;
+	interrupts = <0 1 2>;
+	#interrupt-cells = <1>;
+	interrupt-map-mask = <0xffffffff>;
+	interrupt-map = <0 &intc 0 125 0
+			1 &intc 0 221 0
+			2 &msm_gpio 100 0>;
+	interrupt-names = "hc_irq", "pwr_irq", "status_irq";
+	cd-gpios = <&msm_gpio 100 0x0>;
+
+	status = "ok";
+};
+
+/{
+	mtp_batterydata: qcom,battery-data {
+		qcom,batt-id-range-pct = <15>;
+		#include "../batterydata-itech-3000mah-4200mv.dtsi"
+		#include "../batterydata-itech-3000mah.dtsi"
+		//CONFIG_ZTEMT_COMMON_CHARGER add
+		#include "zte_batterydata_NX527_3000mAh.dtsi"
+		//ZTEMT end
+	};
+};
+
+&pmi8950_fg {
+	qcom,battery-data = <&mtp_batterydata>;
+};
+
+&pmi8950_charger {
+	qcom,battery-data = <&mtp_batterydata>;
+	qcom,chg-led-support;
+	qcom,chg-led-sw-controls;
+};
+
+/* CoreSight */
+&tpiu {
+	pinctrl-names = "sdcard", "trace", "swduart",
+			"swdtrc", "jtag", "spmi";
+	/* NIDnT */
+	pinctrl-0 = <&qdsd_clk_sdcard &qdsd_cmd_sdcard
+		     &qdsd_data0_sdcard &qdsd_data1_sdcard
+		     &qdsd_data2_sdcard &qdsd_data3_sdcard>;
+	pinctrl-1 = <&qdsd_clk_trace &qdsd_cmd_trace
+		     &qdsd_data0_trace &qdsd_data1_trace
+		     &qdsd_data2_trace &qdsd_data3_trace>;
+	pinctrl-2 = <&qdsd_cmd_swduart &qdsd_data0_swduart
+		     &qdsd_data1_swduart &qdsd_data2_swduart
+		     &qdsd_data3_swduart>;
+	pinctrl-3 = <&qdsd_clk_swdtrc &qdsd_cmd_swdtrc
+		     &qdsd_data0_swdtrc &qdsd_data1_swdtrc
+		     &qdsd_data2_swdtrc &qdsd_data3_swdtrc>;
+	pinctrl-4 = <&qdsd_cmd_jtag &qdsd_data0_jtag
+		     &qdsd_data1_jtag &qdsd_data2_jtag
+		     &qdsd_data3_jtag>;
+	pinctrl-5 = <&qdsd_clk_spmi &qdsd_cmd_spmi
+		     &qdsd_data0_spmi &qdsd_data3_spmi>;
+};
+
+
+&pm8950_cajon_dig {
+	status = "disabled";
+};
+
+&pm8950_cajon_analog {
+	status = "disabled";
+};
